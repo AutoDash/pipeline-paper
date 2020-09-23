@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[style=ieee]{biblatex}
-\usepackage{amsmath, amssymb, xcolor}
+\usepackage{amsmath, amssymb, xcolor, tikz, pgfplots}
 
 \newcommand{\todo}[1]{{\color{red}#1}}
 
@@ -120,6 +120,19 @@ A conclusion section is not required. Although a conclusion may review the main 
 \section*{APPENDIX}
 
 \todo{Write the appendix}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  title={Example histogram},
+  xlabel={Classes},
+  ylabel={$\textup{Normal}(\mu=0, \sigma=1)$}
+]
+\addplot[fill, ybar] table [x=X, y=Y, col sep=comma] {example.csv};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
