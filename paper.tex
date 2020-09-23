@@ -39,14 +39,38 @@ A Pipeline to Assemble Near-Accident Footage Datasets
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
 
-\todo{Write the introduction} \\
+In the advent of connected vehicles and autonomous transportation, equipping consumer vehicles with the necessary equipment to facilitate high-end automated collision avoidance systems can be prohibitively expensive. Technologies such as Radar, LIDAR and high-end cameras that are typically used for collision prediction are likely too expensive for most consumers and might not easily be affixed to their vehicles (maybe not true). We note that front-facing dash-cams have become increasingly affordable and prevalent as a means to capture a driver’s perspective leading up to the event of a potential collision. We propose that this egocentric dash-cam video stream can be leveraged by computer vision systems to act as an affordable and commonplace sensor for automated collision prediction. 
 
-why society needs our tool, what other tools exist and what they are lacking 3/4/5 paragraphs
+In this paper we present a software pipeline to facilitate the collection, processing and annotation of egocentric dash-cam videos from various online video repositories to produce datasets that can be used to train deep dash-cam collision prediction models. We aim to generate datasets that are not constrained to any regions or countries but rather provide location-agnostic data that is representative of general, global road and vehicle conditions. These datasets will also be collision-oriented. Current autonomous vehicle data collection techniques typically require astronomically expensive hardware and equipment and, consequently, are rarely involved in collisions and intentionally not put in high risk environments that may lead to a collision. This is the data we hope to capture.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{BACKGROUND / PRELIMINARY}
 \todo{write the background / preliminary} \\
 introducing basic ideas to readers. why is the annotation pipeline important (how was the annotation toolbox developed) - use separate subsections
+
+\todo{Work in progress}
+
+Dash-cams are cheap video cameras that can be mounted a car's dashboard or windshield to continuously save a recording of a driver's perspective to an internal memory card. Exceptional events recorded by the dashcam such as collisions and crashes are often uploaded and shared to popular social media websites and video repositories such as Reddit, Youtube and Imgur and are typically tagged with a closely related set of key terms.
+
+\todo{Not sure what else to put here}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{RELATED WORK}
+
+Chan et al. \cite{chan2016anticipating} approach the same problem of collision prediction via egocentric dash-cam videos. They propose a novel Dynamic-Spatial-Attention Recurrent Neural Network that distributes attention to localized and tracked vehicles within the video and models temporal dependencies to predict the earliest frame of a potential impending collision. Released with their paper is a dataset of 678 dash-cam videos capturing areas in Taiwan. Each video is annotated with vehicle tracking bounding boxes, the vehicles that were involved in the collision and the frame of the collision. We hope to allow researchers to expand on this dataset with location-agnostic data and similar annotations.
+
+
+
+\subsection{Dash-cams}%
+\label{sub:dash_cams}
+
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{METHODOLOGY}
