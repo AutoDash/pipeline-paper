@@ -1,7 +1,7 @@
 SOURCES=$(shell find . -name "*.tex")
 TARGETS=$(SOURCES:.tex=.pdf)
 BIB=$(shell find . -name ".bib")
-DATA=example.csv
+DATA=example.csv by-classes.csv
 .PHONY: all
 
 all: $(DATA) $(TARGETS)

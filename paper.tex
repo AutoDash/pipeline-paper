@@ -2,9 +2,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[style=ieee]{biblatex}
-\usepackage{amsmath, amssymb, xcolor, tikz, pgfplots}
 \usepackage{tikz}
 \usetikzlibrary{positioning,fit,arrows.meta,backgrounds}
+\usepackage{amsmath, amssymb, xcolor, tikz, pgfplots, pgfplotstable}
 
 \newcommand{\todo}[1]{{\color{red}#1}}
 
@@ -158,6 +158,22 @@ A conclusion section is not required. Although a conclusion may review the main 
 \section*{APPENDIX}
 
 \todo{Write the appendix}
+
+\pgfplotstableread[col sep=comma]{by-classes.csv}\byclass
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  title={Objects by class},
+  xlabel={Class},
+  ylabel={Frequency (\# of bounding boxes)},
+  xtick=data,
+  xticklabels from table={\byclass}{X}
+]
+\addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byclass;
+\end{axis}
+\end{tikzpicture}
+\end{center}
 
 \begin{center}
 \begin{tikzpicture}
