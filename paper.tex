@@ -7,6 +7,42 @@
 \usepackage{amsmath, amssymb, xcolor, tikz, pgfplots, pgfplotstable}
 
 \newcommand{\todo}[1]{{\color{red}#1}}
+\usepackage{listings, xcolor}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+
 
 \title{\LARGE \bf
 A Pipeline to Assemble (Near-)Collision Footage Datasets
@@ -158,17 +194,62 @@ In addition to collection and preprocessing, a core component of our pipeline is
 \todo{Talk more about clipping and how we generate distinct data points after clipping}
 
 
+\subsection{Metadata}
+After all of the previous steps have been completed, the pipeline is able to produce a metadata object.
+There are many fields in the metadata object (as can be seen in Figure \ref{metadata_example}):
 
-\begin{figure}[htpb]
-		\centering
-		% TODO: Uncomment this
-    %\includegraphics[width=0.5\textwidth]{images/example_metadata.png}
-		\caption{An example of metadata for a labelled video. Both automatic metadata about the source of the video and manual annotation of the collision is maintained. Each bounding box contains the object classification, a unique identifier and a boolean value representing if the tracked agent is involved in a collision.}
-		\label{fig:images-example_metadata-png}
+\begin{itemize}
+  \item "collision\_type" contains the type of collision in the video (e.g. car vs. car)
+  \item "description" contains a breif description of the video as scraped from the video hosting website
+  \item "download\_src" contains the site that the video was sourced from (e.g. YouTube)
+  \item "tags" is an object that contains custom user-defined tags on videos and additional data that is site specific
+  \item "title" is a string that represents the type of the video
+  \item "url" is the url that the video was fetched from
+  \item "is\_split\_url" is a boolean that represents if all of the frames of the video have bounding boxes in this metadata
+  \item "start\_i" is the start frame of the video that the bounding boxes are created for (if is\_split\_url is true)
+  \item "end\_i" is the end frame of the video the bounding boxes are created for (if is\_split\_url is true)
+  \item "bb\_fields" contains all bounding-box specific data. Each entry is a list, where the $i_{th}$ index in each contains the data for one bounding-box:
+  \begin{itemize}
+    \item "ids[$i$]" represents what vehicle id the $i_{th}$ bounding box represents. Each vehicle in the video has it's own unique id
+    \item "cls[$i$]" represents the object class of the vehicle
+    \item "frames[$i$]" represents what frame of the video the $i_{th}$ bounding box is for
+    \item "has\_collision[$i$]" represents if the vehicle with id $ids[i]$ is in a collision
+    \item "x1s[$i$], y1s[$i$], x2s[$i$], y2s[$i$]" are the coordinates of the two points $(x_1,y_1)$ \& $(x_2,y_2)$ that make bounding box $i$
+  \end{itemize}
+\end{itemize}`
+
+\begin{figure}
+  \begin{lstlisting}[language=json]
+    {
+      "collision_type":"",
+      "description":"",
+      "download_src":"",
+      "tags": {
+        "reddit_post_info":{
+          "id":"<post_id>"
+          "title":"title"
+        }
+      },
+      "title":"Title of the Video",
+      "url":"http:/www.myvideo.com",
+      "is_split_url": false,
+      "start_i": 0,
+      "end_i": 60,
+      "bb_fields": {
+        "cls": [],
+        "frames": [],
+        "has_collision": [],
+        "ids": [],
+        "x1s": [],
+        "y1s": [],
+        "x2s": [],
+        "y2s": [],
+      }
+    }
+  \end{lstlisting}
+    \caption{Example Metadata Produced by the Pipeline}
+    \label{metadata_example}
 \end{figure}
-
-
-\todo{Use a better image}
 
 \begin{figure}[htpb]
 		\centering
