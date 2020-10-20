@@ -3,6 +3,8 @@
 \usepackage[T1]{fontenc}
 \usepackage[style=ieee]{biblatex}
 \usepackage{amsmath, amssymb, xcolor, tikz, pgfplots}
+\usepackage{tikz}
+\usetikzlibrary{positioning,fit,arrows.meta,backgrounds}
 
 \newcommand{\todo}[1]{{\color{red}#1}}
 
@@ -88,6 +90,39 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
     \item Blurring (tracking and blurring of vehicle plates and faces)
   \end{itemize}
 \end{itemize}
+\tikzset{
+    module/.style={%
+        draw, rounded corners,
+        minimum width=#1,
+        minimum height=7mm,
+        font=\sffamily
+        },
+    module/.default=2cm,
+    >=LaTeX
+}
+\begin{tikzpicture}[
+  % This will show the frame around the figure
+  show background rectangle]
+
+  % Place first 6 items
+  \node[module] (crawler) {Web-Scrapers};
+  \node[module, below=of crawler] (downloader) {Downloaders};
+  \node[module, below=of downloader] (splitter) {Video-Splitter};
+  \node[module, below=of splitter] (labeller) {Video-Labelling Tool};
+  \node[module, below=of labeller] (face-blur) {Face Blurring};
+  \node[module, below=of face-blur] (license-blur) {License Plate Blurring};
+  \node[draw,inner xsep=4mm,inner ysep=7mm,fit=(face-blur)(license-blur)](anon){};
+  \node[anchor=north west,inner sep=1pt] at (anon.north west) 
+    {Anonymization};
+  \node[module, below=of anon] (uploader) {Data-Uploader};
+  \draw[->] (crawler)--(downloader);
+  \draw[->] (downloader)--(splitter);
+  \draw[->] (splitter)--(labeller);
+  \draw[->] (labeller)--(face-blur);
+  \draw[->] (face-blur)--(license-blur);
+  \draw[->] (license-blur)--(uploader);
+
+\end{tikzpicture}
 \subsection{Video Preprocessing}
 \subsection{Automatic Annotation}
 \subsection{Object Detection \& Tracking}
