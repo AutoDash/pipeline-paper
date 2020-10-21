@@ -41,7 +41,7 @@ A Pipeline to Assemble Near-Accident Footage Datasets
 
 In the advent of connected vehicles and autonomous transportation, equipping consumer vehicles with the necessary equipment to facilitate high-end automated collision avoidance systems can be prohibitively expensive.
 Technologies such as Radar, LIDAR and high-end cameras that are typically used for collision prediction are likely too expensive for most consumers and might not easily be affixed to their vehicles (maybe not true).
-On the other hand dash-cams, cheap video cameras that can be mounted a car's dashboard, have become increasingly affordable and prevalent as a means to capture a driver’s perspective.
+On the other hand dash-cams, cheap video cameras that can be mounted to a car's dashboard, have become increasingly affordable and prevalent as a means to capture a driver’s perspective.
 Typically used for insurance purposes, dash-cams have the added benefit of recording a wide variety of collisions that wouldn't be feasible to simulate. 
 This has led to the creation of many online communities to share videos of these rare situations on websites such as Reddit, Youtube, and Imgur.
 We propose that this egocentric dash-cam video stream can be leveraged by computer vision systems to act as an affordable and commonplace sensor for automated collision prediction. 
@@ -88,11 +88,47 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
     \item Blurring (tracking and blurring of vehicle plates and faces)
   \end{itemize}
 \end{itemize}
+
+\subsection{Video Collection}
+
+
+The entry into our pipeline is a set of web scraper executors that each target and scrape a specific website or video repository based on a user-defined set of key-terms, and an executor that pulls unlabelled videos from the user's database. Videos that are pulled by the scrapers are immediately added to the database with relevant metadata and marked as unlabelled. Subsequently, they are loaded into memory and sequentially fed into the pipeline. If the pipeline terminates before labelling a video, it remains flagged as unlabelled in the database and the video will be pulled in a subsequent run by the database source executor. Crawler state is maintained via database lookup of specified key-value pairs to ensure duplicate data is not pulled. No video preprocessing such as resizing, trimming or cropping is automatically performed.
+
+Users may define their own search terms to be used when querying the video repository. This value can be set either in the crawler implementation (\todo{or the yaml pipeline configuration file?}). By default, our scrapers query using the keywords: (\todo{should probably define default keywords}). Currently we support scraping and querying Reddit, YouTube and Imgur. Users that want to pull from a video repository that is not currently implemented should create a custom executor and implement the \texttt{iCrawler} interface. This new executor should be added as an entry point in a new yaml configuration and should generate and return a \texttt{MetaDataItem} with video source information to be used by a subsequent and corresponding downloader. \texttt{MetaDataItem} objects are fed into the \texttt{UniversalDownloader} which aggregates \texttt{iDownloader} implementations and distributes \texttt{MetaDataItem} objects to their corresponding downloader via regex matching of source URL's. New downloaders should registered with the \texttt{UniversalDownloader} via the yaml pipeline configuration along with a regex string for url matching.  \todo{Maybe this should be refactored to just pass iCrawler output directly to its downloader}
+
+
 \subsection{Video Preprocessing}
+
+
+
 \subsection{Automatic Annotation}
 \subsection{Object Detection \& Tracking}
+\todo{Automated object detection not used right now?}
 \subsection{Blurring}
+\subsection{Annotation}
 
+In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dash-cam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs we provide tools to annotate the frame the collision occurs, and bounding boxes to localize, identify and track agents both involved and not involved in the collision. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit any variable download resolutions (\todo{Is this a useful feature to have?}).For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
+
+\todo{Talk more about clipping and how we generate distinct data points after clipping}
+
+
+
+\begin{figure}[htpb]
+		\centering
+		\includegraphics[width=0.5\textwidth]{images/example_metadata.png}
+		\caption{An example of metadata for a labelled video. Both automatic metadata about the source of the video and manual annotation of the collision is maintained. Each bounding box contains the object classification, a unique identifier and a boolean value representing if the tracked agent is involved in a collision.}
+		\label{fig:images-example_metadata-png}
+\end{figure}
+
+
+\todo{Use a better image}
+
+\begin{figure}[htpb]
+		\centering
+		\includegraphics[width=0.5\textwidth]{images/example_gui_tool.png}
+		\caption{GUI tool to facilitate annotation}
+		\label{fig:example_gui_tool-png}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{EXPERIMENT}
@@ -124,17 +160,17 @@ A conclusion section is not required. Although a conclusion may review the main 
 
 \todo{Write the appendix}
 
-\begin{center}
-\begin{tikzpicture}
-\begin{axis}[
-  title={Example histogram},
-  xlabel={Classes},
-  ylabel={$\textup{Normal}(\mu=0, \sigma=1)$}
-]
-\addplot[fill, ybar] table [x=X, y=Y, col sep=comma] {example.csv};
-\end{axis}
-\end{tikzpicture}
-\end{center}
+%\begin{center}
+%\begin{tikzpicture}
+%\begin{axis}[
+%  title={Example histogram},
+%  xlabel={Classes},
+%  ylabel={$\textup{Normal}(\mu=0, \sigma=1)$}
+%]
+%\addplot[fill, ybar] table [x=X, y=Y, col sep=comma] {example.csv};
+%\end{axis}
+%\end{tikzpicture}
+%\end{center}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
