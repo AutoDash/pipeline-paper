@@ -2,7 +2,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[style=ieee]{biblatex}
-\usepackage{amsmath, amssymb, xcolor, tikz, pgfplots}
+\usepackage{tikz}
+\usetikzlibrary{positioning,fit,arrows.meta,backgrounds}
+\usepackage{amsmath, amssymb, xcolor, tikz, pgfplots, pgfplotstable}
 
 \newcommand{\todo}[1]{{\color{red}#1}}
 
@@ -89,13 +91,48 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
   \end{itemize}
 \end{itemize}
 
+
+
+\tikzset{
+    module/.style={%
+        draw, rounded corners,
+        minimum width=#1,
+        minimum height=7mm,
+        font=\sffamily
+        },
+    module/.default=2cm,
+    >=LaTeX
+}
+\begin{tikzpicture}[
+  % This will show the frame around the figure
+  show background rectangle]
+
+  % Place first 6 items
+  \node[module] (crawler) {Web-Scrapers};
+  \node[module, below=of crawler] (downloader) {Downloaders};
+  \node[module, below=of downloader] (splitter) {Video-Splitter};
+  \node[module, below=of splitter] (labeller) {Video-Labelling Tool};
+  \node[module, below=of labeller] (face-blur) {Face Blurring};
+  \node[module, below=of face-blur] (license-blur) {License Plate Blurring};
+  \node[draw,inner xsep=4mm,inner ysep=7mm,fit=(face-blur)(license-blur)](anon){};
+  \node[anchor=north west,inner sep=1pt] at (anon.north west) 
+    {Anonymization};
+  \node[module, below=of anon] (uploader) {Data-Uploader};
+  \draw[->] (crawler)--(downloader);
+  \draw[->] (downloader)--(splitter);
+  \draw[->] (splitter)--(labeller);
+  \draw[->] (labeller)--(face-blur);
+  \draw[->] (face-blur)--(license-blur);
+  \draw[->] (license-blur)--(uploader);
+
+\end{tikzpicture}
+
 \subsection{Video Collection}
 
 
 The entry into our pipeline is a set of web scraper executors that each target and scrape a specific website or video repository based on a user-defined set of key-terms, and an executor that pulls unlabelled videos from the user's database. Videos that are pulled by the scrapers are immediately added to the database with relevant metadata and marked as unlabelled. Subsequently, they are loaded into memory and sequentially fed into the pipeline. If the pipeline terminates before labelling a video, it remains flagged as unlabelled in the database and the video will be pulled in a subsequent run by the database source executor. Crawler state is maintained via database lookup of specified key-value pairs to ensure duplicate data is not pulled. No video preprocessing such as resizing, trimming or cropping is automatically performed.
 
 Users may define their own search terms to be used when querying the video repository. This value can be set either in the crawler implementation (\todo{or the yaml pipeline configuration file?}). By default, our scrapers query using the keywords: (\todo{should probably define default keywords}). Currently we support scraping and querying Reddit, YouTube and Imgur. Users that want to pull from a video repository that is not currently implemented should create a custom executor and implement the \texttt{iCrawler} interface. This new executor should be added as an entry point in a new yaml configuration and should generate and return a \texttt{MetaDataItem} with video source information to be used by a subsequent and corresponding downloader. \texttt{MetaDataItem} objects are fed into the \texttt{UniversalDownloader} which aggregates \texttt{iDownloader} implementations and distributes \texttt{MetaDataItem} objects to their corresponding downloader via regex matching of source URL's. New downloaders should registered with the \texttt{UniversalDownloader} via the yaml pipeline configuration along with a regex string for url matching.  \todo{Maybe this should be refactored to just pass iCrawler output directly to its downloader}
-
 
 \subsection{Video Preprocessing}
 
@@ -171,6 +208,33 @@ A conclusion section is not required. Although a conclusion may review the main 
 %\end{axis}
 %\end{tikzpicture}
 %\end{center}
+\pgfplotstableread[col sep=comma]{by-classes.csv}\byclass
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  title={Objects by class},
+  xlabel={Class},
+  ylabel={Frequency (\# of bounding boxes)},
+  xtick=data,
+  xticklabels from table={\byclass}{X}
+]
+\addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byclass;
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  title={Example histogram},
+  xlabel={Classes},
+  ylabel={$\textup{Normal}(\mu=0, \sigma=1)$}
+]
+\addplot[fill, ybar] table [x=X, y=Y, col sep=comma] {example.csv};
+\end{axis}
+\end{tikzpicture}
+\end{center}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
