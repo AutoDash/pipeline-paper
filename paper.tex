@@ -9,7 +9,7 @@
 \newcommand{\todo}[1]{{\color{red}#1}}
 
 \title{\LARGE \bf
-A Pipeline to Assemble Near-Accident Footage Datasets
+A Pipeline to Assemble (Near-)Collision Footage Datasets
 }
 
 \author{
@@ -92,40 +92,45 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
 \end{itemize}
 
 
+\begin{figure}[htpb]
+		\centering
+    \tikzset{
+        module/.style={%
+            draw, rounded corners,
+            minimum width=#1,
+            minimum height=7mm,
+            font=\sffamily
+            },
+        module/.default=2cm,
+        >=LaTeX
+    }
+    \begin{tikzpicture}[
+      % This will show the frame around the figure
+      show background rectangle]
 
-\tikzset{
-    module/.style={%
-        draw, rounded corners,
-        minimum width=#1,
-        minimum height=7mm,
-        font=\sffamily
-        },
-    module/.default=2cm,
-    >=LaTeX
-}
-\begin{tikzpicture}[
-  % This will show the frame around the figure
-  show background rectangle]
+      % Place first 6 items
+      \node[module] (crawler) {Web-Scrapers};
+      \node[module, below=of crawler] (downloader) {Downloaders};
+      \node[module, below=of downloader] (splitter) {Video-Splitter};
+      \node[module, below=of splitter] (labeller) {Video-Labelling Tool};
+      \node[module, below=of labeller] (face-blur) {Face Blurring};
+      \node[module, below=of face-blur] (license-blur) {License Plate Blurring};
+      \node[draw,inner xsep=4mm,inner ysep=7mm,fit=(face-blur)(license-blur)](anon){};
+      \node[anchor=north west,inner sep=1pt] at (anon.north west) 
+        {Anonymization};
+      \node[module, below=of anon] (uploader) {Data-Uploader};
+      \draw[->] (crawler)--(downloader);
+      \draw[->] (downloader)--(splitter);
+      \draw[->] (splitter)--(labeller);
+      \draw[->] (labeller)--(face-blur);
+      \draw[->] (face-blur)--(license-blur);
+      \draw[->] (license-blur)--(uploader);
 
-  % Place first 6 items
-  \node[module] (crawler) {Web-Scrapers};
-  \node[module, below=of crawler] (downloader) {Downloaders};
-  \node[module, below=of downloader] (splitter) {Video-Splitter};
-  \node[module, below=of splitter] (labeller) {Video-Labelling Tool};
-  \node[module, below=of labeller] (face-blur) {Face Blurring};
-  \node[module, below=of face-blur] (license-blur) {License Plate Blurring};
-  \node[draw,inner xsep=4mm,inner ysep=7mm,fit=(face-blur)(license-blur)](anon){};
-  \node[anchor=north west,inner sep=1pt] at (anon.north west) 
-    {Anonymization};
-  \node[module, below=of anon] (uploader) {Data-Uploader};
-  \draw[->] (crawler)--(downloader);
-  \draw[->] (downloader)--(splitter);
-  \draw[->] (splitter)--(labeller);
-  \draw[->] (labeller)--(face-blur);
-  \draw[->] (face-blur)--(license-blur);
-  \draw[->] (license-blur)--(uploader);
+    \end{tikzpicture}
+		\caption{Architecture of the default pipeline}
+		\label{fig:obj-by-class}
+\end{figure}
 
-\end{tikzpicture}
 
 \subsection{Video Collection}
 
@@ -152,7 +157,8 @@ In addition to collection and preprocessing, a core component of our pipeline is
 
 \begin{figure}[htpb]
 		\centering
-		\includegraphics[width=0.5\textwidth]{images/example_metadata.png}
+		% TODO: Uncomment this
+    %\includegraphics[width=0.5\textwidth]{images/example_metadata.png}
 		\caption{An example of metadata for a labelled video. Both automatic metadata about the source of the video and manual annotation of the collision is maintained. Each bounding box contains the object classification, a unique identifier and a boolean value representing if the tracked agent is involved in a collision.}
 		\label{fig:images-example_metadata-png}
 \end{figure}
@@ -162,7 +168,8 @@ In addition to collection and preprocessing, a core component of our pipeline is
 
 \begin{figure}[htpb]
 		\centering
-		\includegraphics[width=0.5\textwidth]{images/example_gui_tool.png}
+		% TODO: Uncomment this
+    %\includegraphics[width=0.5\textwidth]{images/example_gui_tool.png}
 		\caption{GUI tool to facilitate annotation}
 		\label{fig:example_gui_tool-png}
 \end{figure}
@@ -197,32 +204,26 @@ A conclusion section is not required. Although a conclusion may review the main 
 
 \todo{Write the appendix}
 
-%\begin{center}
-%\begin{tikzpicture}
-%\begin{axis}[
-%  title={Example histogram},
-%  xlabel={Classes},
-%  ylabel={$\textup{Normal}(\mu=0, \sigma=1)$}
-%]
-%\addplot[fill, ybar] table [x=X, y=Y, col sep=comma] {example.csv};
-%\end{axis}
-%\end{tikzpicture}
-%\end{center}
 \pgfplotstableread[col sep=comma]{by-classes.csv}\byclass
 
-\begin{center}
-\begin{tikzpicture}
-\begin{axis}[
-  title={Objects by class},
-  xlabel={Class},
-  ylabel={Frequency (\# of bounding boxes)},
-  xtick=data,
-  xticklabels from table={\byclass}{X}
-]
-\addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byclass;
-\end{axis}
-\end{tikzpicture}
-\end{center}
+
+\begin{figure}[htpb]
+		\centering
+    \begin{tikzpicture}
+    \begin{axis}[
+      title={Objects by class},
+      xlabel={Class},
+      ylabel={Frequency (\# of bounding boxes)},
+      xtick=data,
+      xticklabels from table={\byclass}{X}
+    ]
+    \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byclass;
+    \end{axis}
+    \end{tikzpicture}
+		\caption{Object by classes in our private database}
+		\label{fig:obj-by-class}
+\end{figure}
+
 
 \begin{center}
 \begin{tikzpicture}
