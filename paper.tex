@@ -87,7 +87,7 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
   \begin{itemize}
     \item pre-processing
     \item Tracking we can mention how prepare to solve the tracking problem (challenge and future work)
-    \item Blurring (tracking and blurring of vehicle plates and faces)
+    \item Anonymization (tracking and blurring of vehicle plates and faces)
   \end{itemize}
 \end{itemize}
 
@@ -146,7 +146,11 @@ Users may define their own search terms to be used when querying the video repos
 \subsection{Automatic Annotation}
 \subsection{Object Detection \& Tracking}
 \todo{Automated object detection not used right now?}
-\subsection{Blurring}
+\subsection{Anonymization}
+An important facet of automobile data aggregation is in eliminating biases and protecting the identities of depicted individuals. Consequently, our pipeline contains a post-processing stage in which we apply blurring masks to anonymize any personally identifiable information. Specifically, we provide two executors to perform these anonymization tasks: \textttt{FaceBlurrer}, which blurs faces and \texttt{LicensePlateBlurrer} which blurs license plates. Both of these executors are powered by pre-trained machine learning models which detect regions containing personally identifiable information. Specifically, for  \textttt{FaceBlurrer}, we use a MobileNet Single Shot MultiBox Detector (TODO: cite https://github.com/yeephycho/tensorflow-face-detection) and for \texttt{LicensePlateBlurrer} we use a Convolutional Neural Network (TODO: cite http://sergiomsilva.com/pubs/alpr-unconstrained/).
+
+This software module is encapsulated as a library and can be reused by importing our \texttt{anonymization} package as a dependency. The accuracy, amount and type of blurring applied can be tweaked using the API exposed by the \texttt{anonymization} package.
+
 \subsection{Annotation}
 
 In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dash-cam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs we provide tools to annotate the frame the collision occurs, and bounding boxes to localize, identify and track agents both involved and not involved in the collision. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit any variable download resolutions (\todo{Is this a useful feature to have?}).For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
