@@ -80,6 +80,8 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{METHODOLOGY}
 
+The software pipeline is built of multiple executors that each process or handle the data corresponding to a single video before piping the resulting data to the next 
+
 \todo{Write the METHODOLOGY}
 \begin{itemize}
   \item Major pipeline
@@ -90,7 +92,6 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
     \item Anonymization (tracking and blurring of vehicle plates and faces)
   \end{itemize}
 \end{itemize}
-
 
 \begin{figure}[htpb]
 		\centering
@@ -133,7 +134,6 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
 
 
 \subsection{Video Collection}
-
 
 The entry into our pipeline is a set of web scraper executors that each target and scrape a specific website or video repository based on a user-defined set of key-terms, and an executor that pulls unlabelled videos from the user's database. Videos that are pulled by the scrapers are immediately added to the database with relevant metadata and marked as unlabelled. Subsequently, they are loaded into memory and sequentially fed into the pipeline. If the pipeline terminates before labelling a video, it remains flagged as unlabelled in the database and the video will be pulled in a subsequent run by the database source executor. Crawler state is maintained via database lookup of specified key-value pairs to ensure duplicate data is not pulled. No video preprocessing such as resizing, trimming or cropping is automatically performed.
 
@@ -181,8 +181,11 @@ In addition to collection and preprocessing, a core component of our pipeline is
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{EXPERIMENT}
 - present results of our data, reference the Kitti dataset and how they presented their own data (histogram of object classes, velocity, acceleration, etc)
+
 - the major contribution we have is the histogram of accident type
+
 - Histogram of data
+
 - Usage of our data (applications) - not a major section, just describe potential in preventing/predicting accidents and their importance
 
 
