@@ -1,6 +1,9 @@
 X,Y
-car,4013
-truck,1013
+car,17941
+truck,2041
 motorcycle,171
-NONE,71
-pedestrian,1120
+NONE,238
+pole,71
+pedestrian,1600
+bus,111
+van,41

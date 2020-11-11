@@ -221,6 +221,8 @@ There are many ways that we could improve on our system. This are just a series 
 \todo{Write the appendix}
 
 \pgfplotstableread[col sep=comma]{by-classes.csv}\byclass
+\pgfplotstableread[col sep=comma]{by-actors.csv}\byactors
+\pgfplotstableread[col sep=comma]{by-duration.csv}\byduration
 
 
 \begin{figure}[htpb]
@@ -238,6 +240,40 @@ There are many ways that we could improve on our system. This are just a series 
     \end{tikzpicture}
 		\caption{Object by classes in our private database}
 		\label{fig:obj-by-class}
+\end{figure}
+
+\begin{figure}[htpb]
+		\centering
+    \begin{tikzpicture}
+    \begin{axis}[
+      title={Videos by actors},
+      xlabel={Number of actors},
+      ylabel={Frequency (\# of videos)},
+      xtick=data,
+      xticklabels from table={\byactors}{X}
+    ]
+    \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byactors;
+    \end{axis}
+    \end{tikzpicture}
+		\caption{Videos by number of actors}
+		\label{fig:vids-by-actors}
+\end{figure}
+
+\begin{figure}[htpb]
+		\centering
+    \begin{tikzpicture}
+    \begin{axis}[
+      title={Videos by duration},
+      xlabel={Duration (in frames)},
+      ylabel={Frequency (\# of videos)},
+      xtick=data,
+      xticklabels from table={\byduration}{X}
+    ]
+    \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byduration;
+    \end{axis}
+    \end{tikzpicture}
+		\caption{Videos by duration}
+		\label{fig:vids-by-duration}
 \end{figure}
 
 
