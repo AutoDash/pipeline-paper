@@ -10,11 +10,8 @@ def histogram_by_duration(hist, data):
     (key, data) = data
     if data.get('is_cancelled', True):
         return hist
-    """
-    Uncomment this code if you want to ignore unlabelled & uncancelled data
     if 'bb_fields' not in data or 'ids' not in data['bb_fields']:
-       return
-    """
+       return hist
     num_actors = max(data.get('bb_fields', {}).get('ids', [float('-inf')]))
     hist[num_actors] = hist.get(num_actors, 0) + 1
     return hist
@@ -39,5 +36,6 @@ if __name__ == '__main__':
     print(hist)
     dtype = [ ('X', object), ('Y', np.uint32) ]
     Z = np.array([ *hist.items() ], dtype=dtype)
+    Z = np.sort(Z, axis=0)
     np.savetxt('by-actors.csv', Z, delimiter=',', fmt=['%s', '%d'], header='X,Y', comments='')
 

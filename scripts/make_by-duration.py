@@ -10,8 +10,9 @@ def histogram_by_duration(hist, data):
     (key, data) = data
     if data.get('is_cancelled', True):
         return hist
-    num_frames = data.get('end_i', float('inf')) - data.get('start_i', float('-inf'))
-    hist[num_frames] = hist.get(num_frames, 0) + 1
+    if 'end_i' not in data or 'start_i' not in data:
+        return hist
+    hist.append(data.get('end_i', float('inf')) - data.get('start_i', float('-inf')))
     return hist
 
 if __name__ == '__main__':
@@ -27,12 +28,14 @@ if __name__ == '__main__':
     metadata = db.reference('metadata')
     print('Retrieved data')
     data = [ val for val in metadata.get().items() ]
-    hist = reduce(histogram_by_duration, data, {})
+    hist = reduce(histogram_by_duration, data, [])
+    hist, bins = np.histogram(hist, bins=10)
+    """
     if float('inf') in hist:
         hist['Unknown'] = hist[float('inf')]
         del hist[float('inf')]
-    print(hist)
-    dtype = [ ('X', object), ('Y', np.uint32) ]
-    Z = np.array([ *hist.items() ], dtype=dtype)
+    """
+    dtype = [ ('X', np.uint32), ('Y', np.uint32) ]
+    Z = np.array([ *zip(bins, hist) ], dtype=dtype)
     np.savetxt('by-duration.csv', Z, delimiter=',', fmt=['%s', '%d'], header='X,Y', comments='')
 
