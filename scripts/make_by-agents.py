@@ -20,6 +20,8 @@ def histogram_by_duration(hist, data):
         if has_collision and id not in viewed_ids:
             viewed_ids.add(id)
             num_agents += 1
+    if 'CollisionWithRecordingVehicle' in data.get('enum_tags', []):
+        num_agents += 1
     hist[num_agents] = hist.get(num_agents, 0) + 1
     return hist
 

@@ -71,7 +71,7 @@ A Pipeline to Assemble (Near-)Collision Footage Datasets
 \begin{abstract}
 
 The international movement towards developing autonomous vehicle technologies has raised concerns in all spheres of civilization: from legal perspectives to ethical dilemmas; from control theory to safety engineering; from cybersecurity to realtime computing. Over the
-last decade, some emphasis has been made on the need for these vehicles to reduce road collisions and reckless driving. However, research into collision avoidance have been slowed down by the lack of egocentric footage dataset. Currently, these types of datasets are most effectively created through computer generated scenarios because of the dangerous and costly nature of road collisions. We provide a pipeline to assemble datasets of real events that have been published online to complement alredy existing methods. Our aggregated dataset includes egocentric vehicle footage from all over the world: varying visibilities, varying weather conditions, and varying settings.
+last decade, some emphasis has been made on the need for these vehicles to reduce road collisions and reckless driving. However, research into collision avoidance have been slowed down by the lack of egocentric footage dataset. Currently, these types of datasets are most effectively created through computer generated scenarios because of the dangerous and costly nature of road collisions. We provide a pipeline to assemble datasets of real events that have been published online to complement already existing methods. Our aggregated dataset includes egocentric vehicle footage from all over the world: varying visibilities, varying weather conditions, and varying settings.
 
 \end{abstract}
 
@@ -87,13 +87,14 @@ We propose that this egocentric dash-cam video stream can be leveraged by comput
 
 In this paper we present a software pipeline to facilitate the collection, processing and annotation of egocentric dash-cam videos from various online video repositories to produce datasets that can be used to train deep dash-cam collision prediction models.
 We aim to generate datasets that are not constrained to any regions or countries but rather provide location-agnostic data that is representative of general, global road and vehicle conditions.
-These datasets will also be collision-oriented as the majority of these videos contain collisions for people's entertainment.
+These datasets will also be collision-oriented as the majority of these videos contain collisions for people's viewing.
 Current autonomous vehicle data collection techniques typically require astronomically expensive hardware and equipment and, consequently, are rarely involved in collisions and intentionally not put in high risk environments that may lead to a collision.
 This is the data we hope to capture by taking advantage of existing videos of non-artificial collisions.
 
 The pipeline uses web-scraping techniques to fetch the video data from these websites, along with a set of video metadata, describing the video's contents.
 We use this data, in combination with the manually annotated data in order to create the collision dataset.
 This combination allows us to take advantage of the wide variety of videos available on the internet, while still having reliable data that has been curated manually.
+As part of this data, we identify participants and bystanders, both known as agents. Participants are objects that are involved in a collision identified in the metadata, while bystanders are objects that are not.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{RELATED WORK}
@@ -143,9 +144,9 @@ The software pipeline is built of multiple executors that each process or handle
 
 \subsection{Video Collection}
 
-The entry into our pipeline is a set of web scraper executors that each target and scrape a specific website or video repository based on a user-defined set of key-terms, and an executor that pulls unlabelled videos from the user's database. Videos that are pulled by the scrapers are immediately added to the database with relevant metadata and marked as unlabelled. Subsequently, they are loaded into memory and sequentially fed into the pipeline. If the pipeline terminates before labelling a video, it remains flagged as unlabelled in the database and the video will be pulled in a subsequent run by the database source executor. Crawler state is maintained via database lookup of specified key-value pairs to ensure duplicate data is not pulled. No video preprocessing such as resizing, trimming or cropping is automatically performed.
+The entry into our pipeline is a set of web scraper executors that each target and scrape a specific website or video repository based on a user-defined set of key-terms, and a \textit{database source executor} that pulls unlabelled videos from the user's database. Videos that are pulled by the scrapers are immediately added to the database with relevant metadata and marked as unlabelled. Subsequently, they are loaded into memory and sequentially fed into the pipeline. If the pipeline terminates before labelling a video, it remains flagged as unlabelled in the database and the video will be pulled in a subsequent run by the \textit{database source executor}. Crawler state is maintained via database lookup of specified key-value pairs to ensure duplicate data is not pulled. No video preprocessing such as resizing, trimming or cropping is automatically performed.
 
-Users may define their own search terms to be used when querying the video repository. This value can be set in the yaml pipeline configuration file. By default, our scrapers query using the keywords: \texttt{Car crash dashcam}. Currently we support scraping and querying Reddit, YouTube and Imgur. Users that want to pull from a video repository that is not currently implemented should create a custom executor and implement the \texttt{iCrawler} interface. This new executor should be added as an entry point in a new yaml configuration and should generate and return a \texttt{MetaDataItem} with video source information to be used by a subsequent and corresponding downloader. \texttt{MetaDataItem} objects are fed into the \texttt{UniversalDownloader} which aggregates \texttt{iDownloader} implementations and distributes \texttt{MetaDataItem} objects to their corresponding downloader via regex matching of source URL's. New downloaders should registered with the \texttt{UniversalDownloader} via the yaml pipeline configuration along with a regex string for url matching.  \todo{Maybe this should be refactored to just pass iCrawler output directly to its downloader}
+Users may define their own search terms to be used when querying the video repository. This value can be set in a YAML pipeline configuration file. By default, our scrapers query using the keywords: \texttt{Car crash dashcam}. Currently we support querying Reddit and YouTube, downloading from YouTube and Imgur. Users that want to pull from a video repository that is not currently implemented should create a custom executor and implement the \texttt{iCrawler} interface. This new executor should be added as an entry point in a new YAML configuration and should generate and return a \texttt{MetaDataItem} with video source information to be used by a subsequent and corresponding downloader. \texttt{MetaDataItem} objects are fed into the \texttt{UniversalDownloader} which aggregates \texttt{iDownloader} implementations and distributes \texttt{MetaDataItem} objects to their corresponding downloader via regular expressions matching of source URL's. New downloaders should be registered with the \texttt{UniversalDownloader} via a YAML pipeline configuration along with a regular expression string for URL matching.
 
 % HAS BEEN REMOVED BECAUSE NOT FUNCTIONAL
 %\subsection{Video Preprocessing}
@@ -159,32 +160,33 @@ Users may define their own search terms to be used when querying the video repos
 
 \subsection{Annotation}
 
-In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dash-cam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs we provide tools to annotate the frame the collision occurs, and bounding boxes to localize, identify and track agents both involved and not involved in the collision. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. \todo{We don't do this??? We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit any variable download resolutions}. For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
+In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dash-cam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs we provide tools to annotate the frame the collision occurs, and bounding boxes to localize, identify and track agents in the video segment. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. We don't do this??? We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit any variable download resolutions. For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
 Each video segment will eventually become a metadata item. 
 
-Once clipping is complete, each video must be manually labelled. Each object within a video segment must be bounded at every frame. To fasten this process, we provide an interpolation feature which will fill gaps between two entered bounding boxes. 
-
 \subsection{Metadata}
-After all of the previous steps have been completed, the pipeline is able to produce a metadata object.
+After all of the previous steps have been completed, the pipeline is able to produce a complete metadata object.
 There are many fields in the metadata object (as can be seen in Figure \ref{metadata_example}):
 
 \begin{itemize}
-  \item "collision\_type" contains the type of collision in the video (e.g. car vs. car)
-  \item "description" contains a breif description of the video as scraped from the video hosting website
-  \item "download\_src" contains the site that the video was sourced from (e.g. YouTube)
-  \item "tags" is an object that contains custom user-defined tags on videos and additional data that is site specific
-  \item "title" is a string that represents the type of the video
-  \item "url" is the url that the video was fetched from
-  \item "is\_split\_url" is a boolean that represents if all of the frames of the video have bounding boxes in this metadata
-  \item "start\_i" is the start frame of the video that the bounding boxes are created for (if is\_split\_url is true)
-  \item "end\_i" is the end frame of the video the bounding boxes are created for (if is\_split\_url is true)
-  \item "bb\_fields" contains all bounding-box specific data. Each entry is a list, where the $i_{th}$ index in each contains the data for one bounding-box:
+  %\item "collision\_type" contains the type of collision in the video (e.g. car vs. car)
+  \item "\texttt{description}" contains a description of the video as scraped from the video hosting website
+  \item "\texttt{state}" is a string that describes the current state of the video. One of \textit{processed}, \textit{in-progress}, \textit{NULL}
+  \item "\texttt{download\_src}" contains the site that the video was sourced from (e.g. YouTube)
+  \item "\texttt{tags}" is an object that contains custom user-defined tags on videos and additional data that is site specific
+  \item "\texttt{title}" is a string that represents the type of the video
+  \item "\texttt{url}" is the url that the video was fetched from
+  \item "\texttt{is\_split\_url}" is a boolean that represents if all of the frames of the video have bounding boxes in this metadata
+  \item "\texttt{enum\_tags}" is a list of tags identifying the content of the video. New tags can be added while labelling and can identify anything important in the video.
+  \item "\texttt{start\_i}" is the start frame of the video that the bounding boxes are created for (if is\_split\_url is true)
+  \item "\texttt{end\_i}" is the end frame of the video the bounding boxes are created for (if is\_split\_url is true)
+  \item "\texttt{collision\_locations}" a list of frames indicating the collisions
+  \item "\texttt{bb\_fields}" contains all bounding-box specific data. Each entry is a list, where the $i_{th}$ index in each contains the data for one bounding-box:
   \begin{itemize}
-    \item "ids[$i$]" represents what vehicle id the $i_{th}$ bounding box represents. Each vehicle in the video has it's own unique id
-    \item "cls[$i$]" represents the object class of the vehicle
-    \item "frames[$i$]" represents what frame of the video the $i_{th}$ bounding box is for
-    \item "has\_collision[$i$]" represents if the vehicle with id $ids[i]$ is in a collision
-    \item "x1s[$i$], y1s[$i$], x2s[$i$], y2s[$i$]" are the coordinates of the two points $(x_1,y_1)$ \& $(x_2,y_2)$ that make bounding box $i$
+    \item "\texttt{ids[i]}" represents what vehicle id the $i_{th}$ bounding box represents. Each vehicle in the video has it's own unique id
+    \item "\texttt{class[i]}" represents the object class of the vehicle
+    \item "\texttt{frames[i]}" represents what frame of the video the $i_{th}$ bounding box is for
+    \item "\texttt{has\_collision[i]}" represents if the vehicle with id \texttt{ids[i]} is in a collision
+    \item "\texttt{x1s[i], y1s[i], x2s[i], y2s[i]}" are the coordinates of the two points $(x_1,y_1)$ \& $(x_2,y_2)$ that make bounding box i
   \end{itemize}
 \end{itemize}`
 
@@ -203,10 +205,12 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
       "title":"Title of the Video",
       "url":"http:/www.myvideo.com",
       "is_split_url": false,
+      "enum_tags": ["CollisionWithRecordingVehicle"],
       "start_i": 0,
       "end_i": 60,
+      "collision_locations": [],
       "bb_fields": {
-        "cls": [],
+        "clss": [],
         "frames": [],
         "has_collision": [],
         "ids": [],
@@ -223,8 +227,7 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
 
 \begin{figure}[htpb]
 		\centering
-		% TODO: Uncomment this
-    %\includegraphics[width=0.5\textwidth]{images/example_gui_tool.png}
+    \includegraphics[width=0.5\textwidth]{example_gui_tool.png}
 		\caption{GUI tool to facilitate annotation}
 		\label{fig:example_gui_tool-png}
 \end{figure}
@@ -233,7 +236,7 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
 \section{EXPERIMENT}
 
 \todo{We are currently still assembling our dataset. At the time of this writing, we only have 67 positive videos labelled. By using many heuristics like splitting video segments into 5s snippets, we can duplicate our dataset
-by introducing negatives from positive labelled videos. However, we must be concious to preserve a near 1:1 positives to negatives ratio in our testing set. Because of our low turnout, some of the results described below are likely inaccurate and subject to change.
+by introducing negatives from positive labelled videos. However, we must be conscious to preserve a near 1:1 positives to negatives ratio in our testing set. Because of our low turnout, some of the results described below are likely inaccurate and subject to change.
 }
 
 \pgfplotstableread[col sep=comma]{by-classes.csv}\byclass
@@ -256,7 +259,7 @@ We have aggregated some statistics about our dataset to help clients understand 
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byclass;
     \end{axis}
     \end{tikzpicture}
-		\caption{Object by classes in our private database}
+		\caption{Object by classes in our database}
 		\label{fig:obj-by-class}
 \end{figure}
 
@@ -328,7 +331,7 @@ We have aggregated some statistics about our dataset to help clients understand 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\section{CONCLUSION}
-
+% REMOVED BECAUSE WE DON'T HAVE ANY RESULTS
 %\todo{Write the conclusion}
 %A conclusion section is not required. Although a conclusion may review the main points of the paper, do not replicate the abstract as the conclusion. A conclusion might elaborate on the importance of the work or suggest applications and extensions.
 
@@ -339,7 +342,9 @@ There are many ways that we could improve on our system. This are just a series 
 \begin{enumerate}
 \item Custom interpolation between input frames: One idea would be to make it easier to modify the method of interpolation between frames. Currently, linear interpolation is always used. Moreover, given a type of interpolation is stored in the metadata, we probably shouldn't store all interpolated frames, rather than just the ones the user has entered. While linear interpolation works great for entering a frame every 10 frames, supporting more interpolations could be great for faster data entry, or even for supporting affine transformations on more complex bounds.
 
-\item Polyhedral bounds: It's always possible to represent a 2-dimensional polyhedron with a matrix $A\in\mathbb{R}^{n\times 2}$, and a vector $b\in\mathbb{R}^2$, given that the polyhedron can be represented by the set $\left\{x\mid Ax\leq b\right\}$. We could use this idea to store masking bounds that can be used for training Mask-RCNN networks in (near-)collision contexts. This however would be 
+\item Polyhedral bounds: It's always possible to represent a 2-dimensional polyhedron with a matrix $A\in\mathbb{R}^{n\times 2}$, and a vector $b\in\mathbb{R}^2$, given that the polyhedron can be represented by the set $\left\{x\mid Ax\leq b\right\}$. We could use this idea to store masking bounds that can be used for training Mask-RCNN networks in (near-)collision contexts. 
+
+\item Automated labelling: It would make labelling much faster if we had a (semi-)automated process of detecting objects and tracking them over frames. There are models for object detection that behaves reasonably well that we could use, but they would still need to be augmented by a review process. For object tracking, there are simple heuristic algorithms that could be used. 
 
 \item Web interface: Having a web-based user interface would be advantageous for this project. While currently being used in the context of (near-)collision accident, this software has the potential to become a platform for scraping automation and collaboration. Ideally, people without a technical background would be able to contribute to the microtasking involved, and technical contributors would be in charge of creating and managing the automation and general design of the pipeline.
 
