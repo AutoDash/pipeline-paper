@@ -12,8 +12,15 @@ def histogram_by_duration(hist, data):
         return hist
     if 'bb_fields' not in data or 'ids' not in data['bb_fields']:
        return hist
-    num_actors = len(set(data.get('bb_fields', {}).get('ids', [])))
-    hist[num_actors] = hist.get(num_actors, 0) + 1
+    num_agents = 0
+    viewed_ids = set()
+    ids = data.get('bb_fields', {}).get('ids')
+    collisions = data.get('bb_fields', {}).get('has_collision')
+    for id, has_collision in zip(ids, collisions):
+        if has_collision and id not in viewed_ids:
+            viewed_ids.add(id)
+            num_agents += 1
+    hist[num_agents] = hist.get(num_agents, 0) + 1
     return hist
 
 if __name__ == '__main__':
@@ -34,5 +41,4 @@ if __name__ == '__main__':
     dtype = [ ('X', object), ('Y', np.uint32) ]
     Z = np.array([ *hist.items() ], dtype=dtype)
     Z = np.sort(Z, axis=0)
-    np.savetxt('by-actors.csv', Z, delimiter=',', fmt=['%s', '%d'], header='X,Y', comments='')
-
+    np.savetxt('by-agents.csv', Z, delimiter=',', fmt=['%s', '%d'], header='X,Y', comments='')

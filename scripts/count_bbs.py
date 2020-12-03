@@ -6,15 +6,13 @@ from functools import reduce
 
 FIREBASE_CRED_FILENAME = "autodash-9dccb-add3cdae62ea.json"
 
-def histogram_by_duration(hist, data):
+def count_bbs(count, data):
     (key, data) = data
     if data.get('is_cancelled', True):
-        return hist
-    if 'bb_fields' not in data or 'ids' not in data['bb_fields']:
-       return hist
-    num_actors = len(set(data.get('bb_fields', {}).get('ids', [])))
-    hist[num_actors] = hist.get(num_actors, 0) + 1
-    return hist
+        return count
+    if 'bb_fields' not in data:
+       return count
+    return count + 1
 
 if __name__ == '__main__':
     cred = credentials.Certificate(FIREBASE_CRED_FILENAME)
@@ -29,10 +27,6 @@ if __name__ == '__main__':
     metadata = db.reference('metadata')
     print('Retrieved data')
     data = [ val for val in metadata.get().items() ]
-    hist = reduce(histogram_by_duration, data, {})
-    print(hist)
-    dtype = [ ('X', object), ('Y', np.uint32) ]
-    Z = np.array([ *hist.items() ], dtype=dtype)
-    Z = np.sort(Z, axis=0)
-    np.savetxt('by-actors.csv', Z, delimiter=',', fmt=['%s', '%d'], header='X,Y', comments='')
+    count = reduce(count_bbs, data, 0)
+    print(count)
 

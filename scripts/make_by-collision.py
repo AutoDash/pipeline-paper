@@ -3,17 +3,22 @@ import firebase_admin as fb
 from firebase_admin import credentials, db
 from firebase_admin.db import Reference
 from functools import reduce
+from matplotlib import pyplot as plt
 
 FIREBASE_CRED_FILENAME = "autodash-9dccb-add3cdae62ea.json"
 
-def histogram_by_duration(hist, data):
+def pie_by_collision(hist, data):
     (key, data) = data
-    if data.get('is_cancelled', True):
+    if not data.get('enum_tags'):
         return hist
-    if 'bb_fields' not in data or 'ids' not in data['bb_fields']:
-       return hist
-    num_actors = len(set(data.get('bb_fields', {}).get('ids', [])))
-    hist[num_actors] = hist.get(num_actors, 0) + 1
+    enum_tags = data['enum_tags']
+    if 'MultiCollision' in enum_tags:
+        hist.update({ 'MultiCollision': hist.get('MultiCollision', 0) + 1 })
+    elif 'NoCollision' in enum_tags:
+        hist.update({ 'NoCollision': hist.get('NoCollision', 0) + 1 })
+    else:
+        hist.update({ 'SimpleCollision': hist.get('SimpleCollision', 0) + 1 })
+
     return hist
 
 if __name__ == '__main__':
@@ -29,10 +34,7 @@ if __name__ == '__main__':
     metadata = db.reference('metadata')
     print('Retrieved data')
     data = [ val for val in metadata.get().items() ]
-    hist = reduce(histogram_by_duration, data, {})
-    print(hist)
-    dtype = [ ('X', object), ('Y', np.uint32) ]
-    Z = np.array([ *hist.items() ], dtype=dtype)
-    Z = np.sort(Z, axis=0)
-    np.savetxt('by-actors.csv', Z, delimiter=',', fmt=['%s', '%d'], header='X,Y', comments='')
-
+    pie = reduce(pie_by_collision, data, {})
+    fig, ax = plt.subplots()
+    ax.pie(pie.values(), labels=pie.keys(), autopct='%1.1f%%')
+    fig.savefig('by-collision.png')

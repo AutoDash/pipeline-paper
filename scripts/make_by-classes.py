@@ -10,8 +10,13 @@ def histogram_by_class(hist, data):
     (key, data) = data
     if data.get('is_cancelled', True):
         return hist
-    for cls in data.get('bb_fields', {}).get('clss', []):
-        hist[cls] = hist.get(cls, 0) + 1
+    viewed_ids = set()
+    clss = data.get('bb_fields', {}).get('clss', [])
+    ids = data.get('bb_fields', {}).get('ids', [])
+    for cls, id in zip(clss, ids):
+        if id not in viewed_ids:
+            viewed_ids.add(id)
+            hist[cls] = hist.get(cls, 0) + 1
     return hist
 
 if __name__ == '__main__':

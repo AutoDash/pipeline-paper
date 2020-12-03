@@ -10,6 +10,8 @@ def histogram_by_duration(hist, data):
     (key, data) = data
     if data.get('is_cancelled', True):
         return hist
+    if 'bb_fields' not in data:
+        return hist
     if 'end_i' not in data or 'start_i' not in data:
         return hist
     hist.append(data.get('end_i', float('inf')) - data.get('start_i', float('-inf')))

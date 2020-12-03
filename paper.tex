@@ -70,7 +70,8 @@ A Pipeline to Assemble (Near-)Collision Footage Datasets
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-\todo{Write the abstract}
+The international movement towards developing autonomous vehicle technologies has raised concerns in all spheres of civilization: from legal perspectives to ethical dilemmas; from control theory to safety engineering; from cybersecurity to realtime computing. Over the
+last decade, some emphasis has been made on the need for these vehicles to reduce road collisions and reckless driving. However, research into collision avoidance have been slowed down by the lack of egocentric footage dataset. Currently, these types of datasets are most effectively created through computer generated scenarios because of the dangerous and costly nature of road collisions. We provide a pipeline to assemble datasets of real events that have been published online to complement alredy existing methods. Our aggregated dataset includes egocentric vehicle footage from all over the world: varying visibilities, varying weather conditions, and varying settings.
 
 \end{abstract}
 
@@ -78,7 +79,7 @@ A Pipeline to Assemble (Near-)Collision Footage Datasets
 \section{INTRODUCTION}
 
 In the advent of connected vehicles and autonomous transportation, equipping consumer vehicles with the necessary equipment to facilitate high-end automated collision avoidance systems can be prohibitively expensive.
-Technologies such as Radar, LIDAR and high-end cameras that are typically used for collision prediction are likely too expensive for most consumers and might not easily be affixed to their vehicles (maybe not true).
+Technologies such as Radar, LIDAR and high-end cameras that are typically used for collision prediction are likely too expensive for most consumers.
 On the other hand dash-cams, cheap video cameras that can be mounted to a car's dashboard, have become increasingly affordable and prevalent as a means to capture a driver’s perspective.
 Typically used for insurance purposes, dash-cams have the added benefit of recording a wide variety of collisions that wouldn't be feasible to simulate. 
 This has led to the creation of many online communities to share videos of these rare situations on websites such as Reddit, Youtube, and Imgur.
@@ -93,9 +94,6 @@ This is the data we hope to capture by taking advantage of existing videos of no
 The pipeline uses web-scraping techniques to fetch the video data from these websites, along with a set of video metadata, describing the video's contents.
 We use this data, in combination with the manually annotated data in order to create the collision dataset.
 This combination allows us to take advantage of the wide variety of videos available on the internet, while still having reliable data that has been curated manually.
-\todo{Not sure what else to put here}
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{RELATED WORK}
@@ -104,30 +102,11 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
 
 
 
-\subsection{Dash-cams}%
-\label{sub:dash_cams}
-
-
-
-
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{METHODOLOGY}
 
 The software pipeline is built of multiple executors that each process or handle the data corresponding to a single video before piping the resulting data to the next executor.
 
-\todo{Write the METHODOLOGY}
-\begin{itemize}
-  \item Major pipeline
-  \item Presenting a graph or figure of the pipeline architecture
-  \begin{itemize}
-    \item pre-processing
-    \item Tracking we can mention how prepare to solve the tracking problem (challenge and future work)
-    \item Anonymization (tracking and blurring of vehicle plates and faces)
-  \end{itemize}
-\end{itemize}
 
 \begin{figure}[htpb]
 		\centering
@@ -150,18 +129,11 @@ The software pipeline is built of multiple executors that each process or handle
       \node[module, below=of crawler] (downloader) {Downloaders};
       \node[module, below=of downloader] (splitter) {Video-Splitter};
       \node[module, below=of splitter] (labeller) {Video-Labelling Tool};
-      \node[module, below=of labeller] (face-blur) {Face Blurring};
-      \node[module, below=of face-blur] (license-blur) {License Plate Blurring};
-      \node[draw,inner xsep=4mm,inner ysep=7mm,fit=(face-blur)(license-blur)](anon){};
-      \node[anchor=north west,inner sep=1pt] at (anon.north west) 
-        {Anonymization};
-      \node[module, below=of anon] (uploader) {Data-Uploader};
+      \node[module, below=of labeller] (uploader) {Data-Uploader};
       \draw[->] (crawler)--(downloader);
       \draw[->] (downloader)--(splitter);
       \draw[->] (splitter)--(labeller);
-      \draw[->] (labeller)--(face-blur);
-      \draw[->] (face-blur)--(license-blur);
-      \draw[->] (license-blur)--(uploader);
+      \draw[->] (labeller)--(uploader);
 
     \end{tikzpicture}
 		\caption{Architecture of the default pipeline}
@@ -173,26 +145,24 @@ The software pipeline is built of multiple executors that each process or handle
 
 The entry into our pipeline is a set of web scraper executors that each target and scrape a specific website or video repository based on a user-defined set of key-terms, and an executor that pulls unlabelled videos from the user's database. Videos that are pulled by the scrapers are immediately added to the database with relevant metadata and marked as unlabelled. Subsequently, they are loaded into memory and sequentially fed into the pipeline. If the pipeline terminates before labelling a video, it remains flagged as unlabelled in the database and the video will be pulled in a subsequent run by the database source executor. Crawler state is maintained via database lookup of specified key-value pairs to ensure duplicate data is not pulled. No video preprocessing such as resizing, trimming or cropping is automatically performed.
 
-Users may define their own search terms to be used when querying the video repository. This value can be set either in the crawler implementation (\todo{or the yaml pipeline configuration file?}). By default, our scrapers query using the keywords: (\todo{should probably define default keywords}). Currently we support scraping and querying Reddit, YouTube and Imgur. Users that want to pull from a video repository that is not currently implemented should create a custom executor and implement the \texttt{iCrawler} interface. This new executor should be added as an entry point in a new yaml configuration and should generate and return a \texttt{MetaDataItem} with video source information to be used by a subsequent and corresponding downloader. \texttt{MetaDataItem} objects are fed into the \texttt{UniversalDownloader} which aggregates \texttt{iDownloader} implementations and distributes \texttt{MetaDataItem} objects to their corresponding downloader via regex matching of source URL's. New downloaders should registered with the \texttt{UniversalDownloader} via the yaml pipeline configuration along with a regex string for url matching.  \todo{Maybe this should be refactored to just pass iCrawler output directly to its downloader}
+Users may define their own search terms to be used when querying the video repository. This value can be set in the yaml pipeline configuration file. By default, our scrapers query using the keywords: \texttt{Car crash dashcam}. Currently we support scraping and querying Reddit, YouTube and Imgur. Users that want to pull from a video repository that is not currently implemented should create a custom executor and implement the \texttt{iCrawler} interface. This new executor should be added as an entry point in a new yaml configuration and should generate and return a \texttt{MetaDataItem} with video source information to be used by a subsequent and corresponding downloader. \texttt{MetaDataItem} objects are fed into the \texttt{UniversalDownloader} which aggregates \texttt{iDownloader} implementations and distributes \texttt{MetaDataItem} objects to their corresponding downloader via regex matching of source URL's. New downloaders should registered with the \texttt{UniversalDownloader} via the yaml pipeline configuration along with a regex string for url matching.  \todo{Maybe this should be refactored to just pass iCrawler output directly to its downloader}
 
-\subsection{Video Preprocessing}
-
-
-
-\subsection{Automatic Annotation}
-\subsection{Object Detection \& Tracking}
-\todo{Automated object detection not used right now?}
-\subsection{Anonymization}
-An important facet of automobile data aggregation is in eliminating biases and protecting the identities of depicted individuals. Consequently, our pipeline contains a post-processing stage in which we apply blurring masks to anonymize any personally identifiable information. Specifically, we provide two executors to perform these anonymization tasks: \texttt{FaceBlurrer}, which blurs faces and \texttt{LicensePlateBlurrer} which blurs license plates. Both of these executors are powered by pre-trained machine learning models which detect regions containing personally identifiable information. Specifically, for  \texttt{FaceBlurrer}, we use a MobileNet Single Shot MultiBox Detector (TODO: cite https://github.com/yeephycho/tensorflow-face-detection) and for \texttt{LicensePlateBlurrer} we use a Convolutional Neural Network (TODO: cite http://sergiomsilva.com/pubs/alpr-unconstrained/).
-
-This software module is encapsulated as a library and can be reused by importing our \texttt{anonymization} package as a dependency. The accuracy, amount and type of blurring applied can be tweaked using the API exposed by the \texttt{anonymization} package.
+% HAS BEEN REMOVED BECAUSE NOT FUNCTIONAL
+%\subsection{Video Preprocessing}
+%\subsection{Automatic Annotation}
+%\subsection{Object Detection \& Tracking}
+%\todo{Automated object detection not used right now?}
+%\subsection{Anonymization}
+%An important facet of automobile data aggregation is in eliminating biases and protecting the identities of depicted individuals. Consequently, our pipeline contains a post-processing stage in which we apply blurring masks to anonymize any personally identifiable information. Specifically, we provide two executors to perform these anonymization tasks: \texttt{FaceBlurrer}, which blurs faces and \texttt{LicensePlateBlurrer} which blurs license plates. Both of these executors are powered by pre-trained machine learning models which detect regions containing personally identifiable information. Specifically, for  \texttt{FaceBlurrer}, we use a MobileNet Single Shot MultiBox Detector (TODO: cite https://github.com/yeephycho/tensorflow-face-detection) and for \texttt{LicensePlateBlurrer} we use a Convolutional Neural Network (TODO: cite http://sergiomsilva.com/pubs/alpr-unconstrained/).
+%
+%This software module is encapsulated as a library and can be reused by importing our \texttt{anonymization} package as a dependency. The accuracy, amount and type of blurring applied can be tweaked using the API exposed by the \texttt{anonymization} package.
 
 \subsection{Annotation}
 
-In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dash-cam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs we provide tools to annotate the frame the collision occurs, and bounding boxes to localize, identify and track agents both involved and not involved in the collision. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit any variable download resolutions (\todo{Is this a useful feature to have?}).For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
+In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dash-cam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs we provide tools to annotate the frame the collision occurs, and bounding boxes to localize, identify and track agents both involved and not involved in the collision. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. \todo{We don't do this??? We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit any variable download resolutions}. For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
+Each video segment will eventually become a metadata item. 
 
-\todo{Talk more about clipping and how we generate distinct data points after clipping}
-
+Once clipping is complete, each video must be manually labelled. Each object within a video segment must be bounded at every frame. To fasten this process, we provide an interpolation feature which will fill gaps between two entered bounding boxes. 
 
 \subsection{Metadata}
 After all of the previous steps have been completed, the pipeline is able to produce a metadata object.
@@ -261,60 +231,27 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{EXPERIMENT}
-- present results of our data, reference the Kitti dataset and how they presented their own data (histogram of object classes, velocity, acceleration, etc)
 
-- the major contribution we have is the histogram of accident type
-
-- Histogram of data
-
-- Usage of our data (applications) - not a major section, just describe potential in preventing/predicting accidents and their importance
-
-
-\todo{Write the EXPERIMENT SECTION (analyzing data)}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{CONCLUSION}
-
-\todo{Write the conclusion}
-A conclusion section is not required. Although a conclusion may review the main points of the paper, do not replicate the abstract as the conclusion. A conclusion might elaborate on the importance of the work or suggest applications and extensions.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{FUTURE WORK}
-
-There are many ways that we could improve on our system. This are just a series of ideas that we could think of:
-\begin{enumerate}
-\item Custom interpolation between input frames: One idea would be to make it easier to modify the method of interpolation between frames. Currently, linear interpolation is always used. Moreover, given a type of interpolation is stored in the metadata, we probably shouldn't store all interpolated frames, rather than just the ones the user has entered. While linear interpolation works great for entering a frame every 10 frames, supporting more interpolations could be great for faster data entry, or even for supporting affine transformations on more complex bounds.
-
-\item Polyhedral bounds: It's always possible to represent a 2-dimensional polyhedron with a matrix $A\in\mathbb{R}^{n\times 2}$, and a vector $b\in\mathbb{R}^2$, given that the polyhedron can be represented by the set $\left\{x\mid Ax\leq b\right\}$. We could use this idea to store masking bounds that can be used for training Mask-RCNN networks in (near-)collision contexts.
-
-\item Web interface: Having a web-based user interface would be advantageous for this project. While currently being used in the context of (near-)collision accident, this software has the potential to become a platform for scraping automation and collaboration. Ideally, people without a technical background would be able to contribute to the microtasking involved, and technical contributors would be in charge of creating and managing the automation and general design of the pipeline.
-
-\end{enumerate}
-\todo{Write the future work ideas}
-
-\addtolength{\textheight}{-12cm}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section*{APPENDIX}
-
-\todo{Write the appendix}
+\todo{We are currently still assembling our dataset. At the time of this writing, we only have 67 positive videos labelled. By using many heuristics like splitting video segments into 5s snippets, we can duplicate our dataset
+by introducing negatives from positive labelled videos. However, we must be concious to preserve a near 1:1 positives to negatives ratio in our testing set. Because of our low turnout, some of the results described below are likely inaccurate and subject to change.
+}
 
 \pgfplotstableread[col sep=comma]{by-classes.csv}\byclass
 \pgfplotstableread[col sep=comma]{by-actors.csv}\byactors
+\pgfplotstableread[col sep=comma]{by-agents.csv}\byagents
 \pgfplotstableread[col sep=comma]{by-duration.csv}\byduration
 
+We have aggregated some statistics about our dataset to help clients understand various distributions in the data. While these distributions may be representative of online collision footage, they are not necessarily of real world collisions. 
 
 \begin{figure}[htpb]
 		\centering
     \begin{tikzpicture}
     \begin{axis}[
       title={Objects by class},
-      xlabel={Class},
-      ylabel={Frequency (\# of bounding boxes)},
+      ylabel={Frequency (\# of objects)},
       xtick=data,
-      xticklabels from table={\byclass}{X}
+      xticklabels from table={\byclass}{X},
+      xticklabel style={rotate=90}
     ]
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byclass;
     \end{axis}
@@ -344,6 +281,23 @@ There are many ways that we could improve on our system. This are just a series 
 		\centering
     \begin{tikzpicture}
     \begin{axis}[
+      title={Videos by agents},
+      xlabel={Number of agents},
+      ylabel={Frequency (\# of videos)},
+      xtick=data,
+      xticklabels from table={\byagents}{X}
+    ]
+    \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byagents;
+    \end{axis}
+    \end{tikzpicture}
+		\caption{Videos by number of agents}
+		\label{fig:vids-by-agents}
+\end{figure}
+
+\begin{figure}[htpb]
+		\centering
+    \begin{tikzpicture}
+    \begin{axis}[
       title={Videos by duration},
       xlabel={Duration (in frames)},
       ylabel={Frequency (\# of videos)},
@@ -357,21 +311,44 @@ There are many ways that we could improve on our system. This are just a series 
 		\label{fig:vids-by-duration}
 \end{figure}
 
+\begin{figure}[htpb]
+		\centering
+    \includegraphics[width=3in]{by-collision.png}
+		\caption{Videos by collision}
+		\label{fig:vids-by-collision}
+\end{figure}
 
-\begin{center}
-\begin{tikzpicture}
-\begin{axis}[
-  title={Example histogram},
-  xlabel={Classes},
-  ylabel={$\textup{Normal}(\mu=0, \sigma=1)$}
-]
-\addplot[fill, ybar] table [x=X, y=Y, col sep=comma] {example.csv};
-\end{axis}
-\end{tikzpicture}
-\end{center}
+\begin{figure}[htpb]
+		\centering
+    \includegraphics[width=3in]{by-camera.png}
+		\caption{Videos by camera}
+		\label{fig:vids-by-camera}
+\end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{CONCLUSION}
+
+%\todo{Write the conclusion}
+%A conclusion section is not required. Although a conclusion may review the main points of the paper, do not replicate the abstract as the conclusion. A conclusion might elaborate on the importance of the work or suggest applications and extensions.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{FUTURE WORK}
+
+There are many ways that we could improve on our system. This are just a series of ideas that we could think of:
+\begin{enumerate}
+\item Custom interpolation between input frames: One idea would be to make it easier to modify the method of interpolation between frames. Currently, linear interpolation is always used. Moreover, given a type of interpolation is stored in the metadata, we probably shouldn't store all interpolated frames, rather than just the ones the user has entered. While linear interpolation works great for entering a frame every 10 frames, supporting more interpolations could be great for faster data entry, or even for supporting affine transformations on more complex bounds.
+
+\item Polyhedral bounds: It's always possible to represent a 2-dimensional polyhedron with a matrix $A\in\mathbb{R}^{n\times 2}$, and a vector $b\in\mathbb{R}^2$, given that the polyhedron can be represented by the set $\left\{x\mid Ax\leq b\right\}$. We could use this idea to store masking bounds that can be used for training Mask-RCNN networks in (near-)collision contexts. This however would be 
+
+\item Web interface: Having a web-based user interface would be advantageous for this project. While currently being used in the context of (near-)collision accident, this software has the potential to become a platform for scraping automation and collaboration. Ideally, people without a technical background would be able to contribute to the microtasking involved, and technical contributors would be in charge of creating and managing the automation and general design of the pipeline.
+
+\end{enumerate}
+
+\addtolength{\textheight}{-12cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \nocite{*}
 \printbibliography
