@@ -70,7 +70,7 @@ A Pipeline to Assemble (Near-)Collision Footage Datasets
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-The international movement towards developing autonomous vehicle technologies has raised concerns in all spheres of civilization: from legal perspectives to ethical dilemmas; from control theory to safety engineering; from cybersecurity to realtime computing. Over the
+The international movement towards developing autonomous vehicle technologies has raised concerns in all spheres of society: from legal perspectives to ethical dilemmas; from control theory to safety engineering; from cybersecurity to realtime computing. Over the
 last decade, some emphasis has been made on the need for these vehicles to reduce road collisions and reckless driving. However, research into collision avoidance have been slowed down by the lack of egocentric footage dataset. Currently, these types of datasets are most effectively created through computer generated scenarios because of the dangerous and costly nature of road collisions. We provide a pipeline to assemble datasets of real events that have been published online to complement already existing methods. Our aggregated dataset includes egocentric vehicle footage from all over the world: varying visibilities, varying weather conditions, and varying settings.
 
 \end{abstract}
@@ -99,7 +99,7 @@ As part of this data, we identify participants and bystanders, both known as age
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{RELATED WORK}
 
-Chan et al. \cite{chan2016anticipating} approach the same problem of collision prediction via egocentric dash-cam videos. They propose a novel Dynamic-Spatial-Attention Recurrent Neural Network that distributes attention to localized and tracked vehicles within the video and models temporal dependencies to predict the earliest frame of a potential impending collision. Released with their paper is a dataset of 678 dash-cam videos capturing areas in Taiwan. Each video is annotated with vehicle tracking bounding boxes, the vehicles that were involved in the collision and the frame of the collision. We hope to allow researchers to expand on this dataset with location-agnostic data and similar annotations.
+Chan et al. \cite{chan2016anticipating} approach the same problem of collision prediction via egocentric dash-cam videos. They propose a novel Dynamic-Spatial-Attention Recurrent Neural Network (DSARNN) that distributes attention to localized and detected vehicles within the video and models temporal dependencies to predict the earliest frame of a potential impending collision. Released with their paper is a dataset of 678 dash-cam videos capturing areas in Taiwan. Each video is annotated with vehicle tracking bounding boxes, the vehicles that were involved in the collision and the frame of the collision. We hope to allow researchers to expand on this dataset with location-agnostic data and similar annotations.
 
 
 
@@ -160,7 +160,7 @@ Users may define their own search terms to be used when querying the video repos
 
 \subsection{Annotation}
 
-In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dash-cam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs we provide tools to annotate the frame the collision occurs, and bounding boxes to localize, identify and track agents in the video segment. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. We don't do this??? We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit any variable download resolutions. For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
+In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dash-cam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs we provide tools to annotate the frame the collision occurs, and bounding boxes to localize, identify and track agents in the video segment. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit any variable download resolutions. For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
 Each video segment will eventually become a metadata item. 
 
 \subsection{Metadata}
@@ -235,16 +235,33 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{EXPERIMENT}
 
-\todo{We are currently still assembling our dataset. At the time of this writing, we only have 67 positive videos labelled. By using many heuristics like splitting video segments into 5s snippets, we can duplicate our dataset
-by introducing negatives from positive labelled videos. However, we must be conscious to preserve a near 1:1 positives to negatives ratio in our testing set. Because of our low turnout, some of the results described below are likely inaccurate and subject to change.
-}
+
+In order to evaluate the importance of acquiring data from multiple geographical locations and under varying driving conditions around the world, we have manually collected a dataset of 223 video clips on which we will test the existing collision anticipation model, DSARNN.  This dataset is comprised of 97 positive and 126 negative videos. Most of these videos represent road scenes from North America, Europe and Russia which have noticeably different characteristics than those in Taiwan. To prepare our data we follow the steps outlined by Chan et. al \cite{chan2016anticipating}. Namely, we trim videos such that they are 5 seconds long sampled at 20fps. We trim such that the collision occurs at frame 90, i.e. the first 90 frames are used for collision prediction. This trimming and sampling functionality is provided within a configuration of our pipeline. In our experiments we use the DSARNN model to be trained on features produced by a running a VGG \cite{simonyan2015deep} on each full frame and the cropped objects within the frame and concatenating the output. This is denoted VGG+RNN+F+D-con. in the original publication. We note that this data includes manually annotated bounding boxes, so there will be no error imposed by using automated vehicle detection and localization models.
+
+In our first experiment we merge our dataset with the dataset provided by Chan et. al. We augment their train set with 77 positives and 106 negatives, and their test set with 20 positives and 20 negatives. We use the same training procedure as Chan et. al, namely we train for 40 epochs with a learning rate of $10^{-4}$. Although our data contribution here is relatively small, we observe a mean time-to-accident of 2.198 at 80\% recall which is very similar to the existing results from Chan et. al, however we observe an average precision of 66.22\% which is appreciably lower than the 73.53\% average precision reported by Chan et. al.
+
+In our second experiment we use the provided pre-trained DSARNN model and test the performance on our entire dataset of 223 videos. We see very poor prediction performance at an average precision of 34.29\%, and in Figure \ref{fig:pr_curve} we observe poor precision at all recall values.
+
+\begin{figure}[htpb]
+		\centering
+		\includegraphics[width=0.4\textwidth]{prcurve.png}
+		\caption{}
+		\label{fig:pr_curve}
+\end{figure}
+
+These experiments seem to support the notion that in order for a collision prediction model to be generally effective in practice, it must be trained on collisions and complex roads scenes from varying regions and road conditions around the world, which is what we hope to achieve with this data collection pipeline.
+
+
+
+
+
 
 \pgfplotstableread[col sep=comma]{by-classes.csv}\byclass
 \pgfplotstableread[col sep=comma]{by-actors.csv}\byactors
 \pgfplotstableread[col sep=comma]{by-agents.csv}\byagents
 \pgfplotstableread[col sep=comma]{by-duration.csv}\byduration
 
-We have aggregated some statistics about our dataset to help clients understand various distributions in the data. While these distributions may be representative of online collision footage, they are not necessarily of real world collisions. 
+We have aggregated some statistics about our dataset to help clients understand various distributions in the data. While these distributions may be representative of online collision footage, they are not necessarily representative of real world collisions. 
 
 \begin{figure}[htpb]
 		\centering
