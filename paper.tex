@@ -175,7 +175,7 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
   \item "\texttt{tags}" is an object that contains custom user-defined tags on videos and additional data that is site specific
   \item "\texttt{title}" is a string that represents the type of the video
   \item "\texttt{url}" is the url that the video was fetched from
-  \item "\texttt{is\_split\_url}" is a boolean that represents if all of the frames of the video have bounding boxes in this metadata
+  \item "\texttt{is\_split\_url}" is a boolean that is true if all of the frames of the video are covered in this metadata item and false if no
   \item "\texttt{enum\_tags}" is a list of tags identifying the content of the video. New tags can be added while labelling and can identify anything important in the video.
   \item "\texttt{start\_i}" is the start frame of the video that the bounding boxes are created for (if is\_split\_url is true)
   \item "\texttt{end\_i}" is the end frame of the video the bounding boxes are created for (if is\_split\_url is true)
