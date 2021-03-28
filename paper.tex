@@ -71,7 +71,7 @@ A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
 \begin{abstract}
 
 The international movement towards developing autonomous vehicle technologies has raised concerns in many spheres of society: from legal perspectives to ethical dilemmas; from control theory to safety engineering; from cybersecurity to realtime computing. Over the
-last decade, some emphasis has been made on the need for these vehicles to reduce road collisions and reckless driving. However, research into collision avoidance has been slowed down by the lack of egocentric footage datasets. Currently, this types of data is most effectively created through computer generated scenarios due to the dangerous and costly nature of road collisions. We provide a pipeline to assemble datasets of real events that have been published online to complement already existing methods. Our aggregated dataset includes egocentric vehicle footage from all over the world: varying visibilities, varying weather conditions, and varying settings.
+last decade, some emphasis has been made on the need for these vehicles to reduce road collisions and reckless driving. However, research into collision avoidance has been slowed down by the lack of egocentric footage datasets. Currently, this type of data is most effectively created through computer generated scenarios due to the dangerous and costly nature of road collisions. We provide a pipeline to assemble datasets of real events that have been published online to complement already existing methods. Futher, we present an aggregated dataset that we have produced using our pipeline which includes egocentric vehicle footage from all over the world subject to varying visibilities, varying weather conditions, and varying settings.
 
 \end{abstract}
 
@@ -80,9 +80,9 @@ last decade, some emphasis has been made on the need for these vehicles to reduc
 
 In the advent of connected vehicles and autonomous transportation, equipping consumer vehicles with the necessary equipment to facilitate high-end automated collision avoidance systems can be prohibitively expensive.
 Technologies such as Radar, LIDAR and high-end cameras that are typically used for collision prediction are likely too expensive for most consumers.
-On the other hand dash-cams, cheap video cameras that can be mounted to a car's dashboard, have become increasingly affordable and prevalent as a means to capture a driver’s perspective.
+On the other hand, dash-cams, which are cheap video cameras that can be mounted to a car's dashboard, have become increasingly affordable and prevalent as a means to capture a driver’s perspective.
 Typically used for insurance purposes, dash-cams have the added benefit of recording a wide variety of collisions that wouldn't be feasible to simulate. 
-This has led to the creation of many online communities to share videos of these rare situations on websites such as Reddit, Youtube, and Imgur.
+This has led to the creation of many online communities to share videos of these rare situations on websites such as Reddit, YouTube, and Imgur.
 We propose that this egocentric dash-cam video stream can be leveraged by computer vision systems to act as an affordable and commonplace sensor for automated collision prediction. 
 
 In this paper we present a software pipeline to facilitate the collection, processing and annotation of egocentric dash-cam videos from various online video repositories to produce datasets that can be used to train deep dash-cam collision prediction models.
@@ -360,7 +360,7 @@ There are many ways that we could improve our system, such as the following:
 
 \item Polyhedral bounds: It's always possible to represent a 2-dimensional polyhedron with a matrix $A\in\mathbb{R}^{n\times 2}$, and a vector $b\in\mathbb{R}^2$, given that the polyhedron can be represented by the set $\left\{x\mid Ax\leq b\right\}$. We could use this idea to store masking bounds that can be used for training Mask-RCNN networks in (near-)collision contexts. 
 
-\item Automated labelling: It would make labelling much faster if we had a (semi-)automated process of detecting objects and tracking them over frames. There are models for object detection that behaves reasonably well that we could use, but they would still need to be augmented by a review process. For object tracking, there are simple heuristic algorithms that could be used. 
+\item Automated labelling: It would make labelling much faster if we had a (semi-)automated process of detecting objects and tracking them over frames. There are models for object detection that behave reasonably well which we could use, but they would still need to be augmented by a review process. For object tracking, there are simple heuristic algorithms that could be used. 
 
 \item Web interface: Having a web-based user interface would be advantageous for this project. While currently being used in the context of (near-)collision accident, this software has the potential to become a platform for scraping automation and collaboration. Ideally, people without a technical background would be able to contribute to the microtasking involved, and technical contributors would be in charge of creating and managing the automation and general design of the pipeline.
 
