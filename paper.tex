@@ -148,15 +148,15 @@ The entry into our pipeline is a set of web scraper executors that each target a
 
 Users may define their own search terms to be used when querying the video repository. This value can be set in a YAML pipeline configuration file. By default, our scrapers query using the keywords: \texttt{Car crash dashcam}. Currently we support crawling Reddit and YouTube to locate videos that are of interest, and downloading videos hosted on YouTube and Imgur. Users that want to pull from a video repository that is not currently implemented should create a custom executor and implement the \texttt{iCrawler} interface. This new executor should be added as an entry point in a new YAML configuration and should generate and return a \texttt{MetaDataItem} with video source information to be used by a subsequent and corresponding downloader. \texttt{MetaDataItem} objects are fed into the \texttt{UniversalDownloader} which aggregates \texttt{iDownloader} implementations and distributes \texttt{MetaDataItem} objects to their corresponding downloader via regular expressions matching of source URL's. New downloaders should be registered with the \texttt{UniversalDownloader} via a YAML pipeline configuration along with a regular expression string for URL matching.
 
-% HAS BEEN REMOVED BECAUSE NOT FUNCTIONAL
+%HAS BEEN REMOVED BECAUSE NOT FUNCTIONAL
 %\subsection{Video Preprocessing}
 %\subsection{Automatic Annotation}
 %\subsection{Object Detection \& Tracking}
 %\todo{Automated object detection not used right now?}
-%\subsection{Anonymization}
-%An important facet of automobile data aggregation is in eliminating biases and protecting the identities of depicted individuals. Consequently, our pipeline contains a post-processing stage in which we apply blurring masks to anonymize any personally identifiable information. Specifically, we provide two executors to perform these anonymization tasks: \texttt{FaceBlurrer}, which blurs faces and \texttt{LicensePlateBlurrer} which blurs license plates. Both of these executors are powered by pre-trained machine learning models which detect regions containing personally identifiable information. Specifically, for  \texttt{FaceBlurrer}, we use a MobileNet Single Shot MultiBox Detector (TODO: cite https://github.com/yeephycho/tensorflow-face-detection) and for \texttt{LicensePlateBlurrer} we use a Convolutional Neural Network (TODO: cite http://sergiomsilva.com/pubs/alpr-unconstrained/).
-%
-%This software module is encapsulated as a library and can be reused by importing our \texttt{anonymization} package as a dependency. The accuracy, amount and type of blurring applied can be tweaked using the API exposed by the \texttt{anonymization} package.
+\subsection{Anonymization}
+An important facet of automobile data aggregation is in eliminating biases and protecting the identities of depicted individuals. Consequently, our pipeline contains a post-processing stage in which we apply blurring masks to anonymize any personally identifiable information. Specifically, we provide the executor \texttt{FaceBlurrer}, which blurs faces. This executor first uses a MobileNet Single Shot MultiBox Detector \cite{yixuan_h_y_hu_2021_4642275} trained on the WIDERFACE dataset \cite{yang2016wider} to obtain the bounding boxes of all visibly identifiable individuals' faces at each frame of a given video and then applies a blurring mask over each bounding box.
+
+This software module is encapsulated as a library and can be reused by importing our \texttt{anonymization} package. The accuracy, amount and type of blurring applied can be tweaked using the API exposed by the \texttt{anonymization} package.
 
 \subsection{Annotation}
 
