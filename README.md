@@ -1,6 +1,6 @@
 # Pipeline Paper
 
-Code to generate our paper explaining our work on a pipeline.
+Code to generate our paper explaining our work on our pipeline.
 
 # Dependencies
 
