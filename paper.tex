@@ -70,7 +70,7 @@ A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-The international movement towards developing autonomous vehicle technologies has raised concerns in many spheres of society: from legal perspectives to ethical dilemmas; from control theory to safety engineering; from cybersecurity to realtime computing. Over the
+The international movement towards developing autonomous vehicle technologies has raised concerns in many spheres of society: from legal perspectives \cite{Pattinson2020} to ethical dilemmas; from control theory to safety engineering; from cybersecurity to realtime computing. Over the
 last decade, some emphasis has been made on the need for these vehicles to reduce road collisions and reckless driving. However, research into collision avoidance has been slowed down by the lack of egocentric footage datasets. Currently, this type of data is most effectively created through computer generated scenarios due to the dangerous and costly nature of road collisions. We provide a pipeline to assemble datasets of real events that have been published online to complement already existing methods. Futher, we present an aggregated dataset that we have produced using our pipeline which includes egocentric vehicle footage from all over the world subject to varying visibilities, varying weather conditions, and varying settings.
 
 \end{abstract}
@@ -179,47 +179,52 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
   \item "\texttt{enum\_tags}" is a list of tags identifying the content of the video. New tags can be added while labelling and can identify anything important in the video.
   \item "\texttt{start\_i}" is the start frame of the video that the bounding boxes are created for (if is\_split\_url is true)
   \item "\texttt{end\_i}" is the end frame of the video the bounding boxes are created for (if is\_split\_url is true)
-  \item "\texttt{collision\_locations}" a list of frames indicating the collisions
-  \item "\texttt{bb\_fields}" contains all bounding-box specific data. Each entry is a list, where the $i_{th}$ index in each contains the data for one bounding-box:
+  \item "\texttt{bb\_fields}" contains all bounding-box specific data.
   \begin{itemize}
-    \item "\texttt{ids[i]}" represents what vehicle id the $i_{th}$ bounding box represents. Each vehicle in the video has it's own unique id
-    \item "\texttt{class[i]}" represents the object class of the vehicle
-    \item "\texttt{frames[i]}" represents what frame of the video the $i_{th}$ bounding box is for
-    \item "\texttt{has\_collision[i]}" represents if the vehicle with id \texttt{ids[i]} is in a collision
-    \item "\texttt{x1s[i], y1s[i], x2s[i], y2s[i]}" are the coordinates of the two points $(x_1,y_1)$ \& $(x_2,y_2)$ that make bounding box i
+    \item "\texttt{collision\_locations}" a list of frame numbers indicating the collision start frames
+    \item "\texttt{resolution}" A list with 2 elements (Width,Height) representing the resolution of the video the bounding boxes were created for in number of pixels 
+    \item "\texttt{objects}" Is a list of all of the bounding boxes for each object in the video. An object being either a vehicle or pedestrian. Within each object, there is metadata specific to that object.
+    \begin{itemize}
+      \item "\texttt{id}" Is a  unique numerical identifier that represents this object
+      \item "\texttt{bboxes}" Is a list of bounding boxes for this specific object. Each bounding box is represented as a 1x5 array with elements (frame number, x1, y1, x2, y2)
+      \item "\texttt{class}" Represents the class of the object, and will be one of "car", "truck", "motorcycle", "van", "pedestrian", "bus"
+      \item "\texttt{has\_collision}" Is a boolean that is true if the object is in a collision, false otherwise
+    \end{itemize}
   \end{itemize}
 \end{itemize}`
 
 \begin{figure}
   \begin{lstlisting}[language=json]
-    {
-      "collision_type":"",
-      "description":"",
-      "download_src":"",
-      "tags": {
-        "reddit_post_info":{
-          "id":"<post_id>"
-          "title":"title"
-        }
-      },
-      "title":"Title of the Video",
-      "url":"http://www.myvideo.com",
-      "is_split_url": false,
-      "enum_tags": ["CollisionWithRecordingVehicle"],
-      "start_i": 0,
-      "end_i": 60,
-      "collision_locations": [],
-      "bb_fields": {
-        "clss": [],
-        "frames": [],
-        "has_collision": [],
-        "ids": [],
-        "x1s": [],
-        "y1s": [],
-        "x2s": [],
-        "y2s": [],
-      }
+{
+  "description":"",
+  "download_src":"YouTube",
+  "tags": {
+    "reddit_post_info":{
+      "id":"<post_id>"
+      "title":"title"
     }
+  },
+  "title":"Title of the Video",
+  "url":"http://www.myvideo.com",
+  "is_split_url": false,
+  "enum_tags": ["NoCollision"],
+  "start_i": 0,
+  "end_i": 60,
+  "bb_fields": {
+    "collision_locations": [],
+    "objects": [
+      {
+        "bboxes": [
+          [0, 1096, 377, 1279, 634]
+        ],
+        "class": "car",
+        "has_collision": false,
+        "id": "1"
+      }
+    ],
+    "resolution": [1280, 720]
+  }
+}
   \end{lstlisting}
     \caption{Example Metadata Produced by the Pipeline}
     \label{metadata_example}
