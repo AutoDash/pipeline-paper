@@ -10,9 +10,9 @@ def histogram_by_duration(hist, data):
     (key, data) = data
     if data.get('is_cancelled', True):
         return hist
-    if 'bb_fields' not in data or 'ids' not in data['bb_fields']:
+    if 'bb_fields' not in data:
        return hist
-    num_actors = len(set(data.get('bb_fields', {}).get('ids', [])))
+    num_actors = len(set([ obj.get('id') for obj in data['bb_fields'].get('objects', []) ]))
     hist[num_actors] = hist.get(num_actors, 0) + 1
     return hist
 
