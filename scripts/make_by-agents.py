@@ -10,15 +10,13 @@ def histogram_by_duration(hist, data):
     (key, data) = data
     if data.get('is_cancelled', True):
         return hist
-    if 'bb_fields' not in data or 'ids' not in data['bb_fields']:
+    if 'bb_fields' not in data:
        return hist
     num_agents = 0
     viewed_ids = set()
-    ids = data.get('bb_fields', {}).get('ids')
-    collisions = data.get('bb_fields', {}).get('has_collision')
-    for id, has_collision in zip(ids, collisions):
-        if has_collision and id not in viewed_ids:
-            viewed_ids.add(id)
+    for obj in data['bb_fields'].get('objects', []):
+        if obj['has_collision'] and obj['id'] not in viewed_ids:
+            viewed_ids.add(obj['id'])
             num_agents += 1
     if 'CollisionWithRecordingVehicle' in data.get('enum_tags', []):
         num_agents += 1
