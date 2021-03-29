@@ -1,6 +1,5 @@
 X,Y
 car,1728
-NONE,67
 bus,43
 truck,174
 motorcycle,101
@@ -11,6 +10,5 @@ industrialMachinery,7
 train,6
 animal,2
 curb,1
-test,1
 bicycle,2
 streetcar,2

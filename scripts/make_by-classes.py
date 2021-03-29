@@ -33,6 +33,8 @@ if __name__ == '__main__':
     print('Retrieved data')
     data = [ val for val in metadata.get().items() ]
     hist = reduce(histogram_by_class, data, {})
+    del hist['NONE']
+    del hist['test']
     print(hist)
     dtype = [ ('X', object), ('Y', np.uint32) ]
     Z = np.array([ *hist.items() ], dtype=dtype)
