@@ -10,9 +10,9 @@ def histogram_by_duration(hist, data):
     (key, data) = data
     if data.get('is_cancelled', True):
         return hist
-    if 'bb_fields' not in data or 'ids' not in data['bb_fields']:
+    if 'bb_fields' not in data:
        return hist
-    num_actors = len(set(data.get('bb_fields', {}).get('ids', [])))
+    num_actors = len(set([ obj.get('id') for obj in data['bb_fields'].get('objects', []) ]))
     hist[num_actors] = hist.get(num_actors, 0) + 1
     return hist
 
@@ -30,9 +30,8 @@ if __name__ == '__main__':
     print('Retrieved data')
     data = [ val for val in metadata.get().items() ]
     hist = reduce(histogram_by_duration, data, {})
-    print(hist)
-    dtype = [ ('X', object), ('Y', np.uint32) ]
-    Z = np.array([ *hist.items() ], dtype=dtype)
-    Z = np.sort(Z, axis=0)
+    hist, bins = np.histogram([ *hist.keys() ], weights=[ *hist.values() ])
+    dtype = [ ('X', np.uint32), ('Y', np.uint32) ]
+    Z = np.array([ *zip(bins, hist) ], dtype=dtype)
     np.savetxt('by-actors.csv', Z, delimiter=',', fmt=['%s', '%d'], header='X,Y', comments='')
 

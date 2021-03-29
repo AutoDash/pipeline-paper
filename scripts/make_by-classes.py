@@ -10,13 +10,13 @@ def histogram_by_class(hist, data):
     (key, data) = data
     if data.get('is_cancelled', True):
         return hist
+    if 'bb_fields' not in data:
+        return hist
     viewed_ids = set()
-    clss = data.get('bb_fields', {}).get('clss', [])
-    ids = data.get('bb_fields', {}).get('ids', [])
-    for cls, id in zip(clss, ids):
-        if id not in viewed_ids:
-            viewed_ids.add(id)
-            hist[cls] = hist.get(cls, 0) + 1
+    for obj in data['bb_fields'].get('objects', []):
+        if obj['id'] not in viewed_ids:
+            viewed_ids.add(obj['id'])
+            hist[obj['class']] = hist.get(obj['class'], 0) + 1
     return hist
 
 if __name__ == '__main__':
@@ -33,6 +33,8 @@ if __name__ == '__main__':
     print('Retrieved data')
     data = [ val for val in metadata.get().items() ]
     hist = reduce(histogram_by_class, data, {})
+    del hist['NONE']
+    del hist['test']
     print(hist)
     dtype = [ ('X', object), ('Y', np.uint32) ]
     Z = np.array([ *hist.items() ], dtype=dtype)
