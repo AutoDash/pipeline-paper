@@ -31,6 +31,7 @@ if __name__ == '__main__':
     print('Retrieved data')
     data = [ val for val in metadata.get().items() ]
     hist = reduce(histogram_by_duration, data, [])
+    print(hist)
     hist, bins = np.histogram(hist, bins=10)
     """
     if float('inf') in hist:
