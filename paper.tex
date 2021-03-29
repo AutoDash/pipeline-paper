@@ -51,7 +51,7 @@ A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
 \author{
          Ben Upenieks, Chaitanya Varier,\\
          Curtis Duy Kha Phan, Jack David Roberts Williamson,\\
-         Nicholas Geofroy, Tony Meng, Vincent-Olivier Roch\\
+         Nicholas Geofroy, Chengzhong Meng, Vincent-Olivier Roch\\
          University of Waterloo\\
          \\
          \tt\small ben.upenieks@uwaterloo.ca, cvarier@uwaterloo.ca,
@@ -71,21 +71,21 @@ A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
 \begin{abstract}
 
 The international movement towards developing autonomous vehicle technologies has raised concerns in many spheres of society: from legal perspectives \cite{Pattinson2020} to ethical dilemmas; from control theory to safety engineering; from cybersecurity to realtime computing. Over the
-last decade, some emphasis has been made on the need for these vehicles to reduce road collisions and reckless driving. However, research into collision avoidance has been slowed down by the lack of egocentric footage datasets. Currently, this type of data is most effectively created through computer generated scenarios due to the dangerous and costly nature of road collisions. We provide a pipeline to assemble datasets of real events that have been published online to complement already existing methods. Futher, we present an aggregated dataset that we have produced using our pipeline which includes egocentric vehicle footage from all over the world subject to varying visibilities, varying weather conditions, and varying settings.
+last decade, some emphasis has been made on the need for these vehicles to reduce road collisions and reckless driving. However, research into collision avoidance has been slowed down by the lack of egocentric footage datasets. Currently, this type of data is created through computer generated scenarios \cite{Kim_Lee_Hwang_Suh_2019} due to the dangerous and costly nature of road collisions. We provide a pipeline to assemble datasets of real events that have been published online to complement already existing methods. Futher, we present an aggregated dataset that we have produced using our pipeline which includes egocentric vehicle footage from all over the world subject to varying visibilities, varying weather conditions, and varying settings.
 
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
 
-In the advent of connected vehicles and autonomous transportation, it has become commonplace to equip vehicles with the necessary equipment to facilitate high-end automated collision avoidance systems.
+In the advent of connected vehicles and autonomous transportation, it has become commonplace to equip vehicles with the necessary equipment to facilitate high-end automated collision avoidance systems \cite{Perumal2020LidarBI}.
 Using these vehicles to simulate collision situations has a two-fold cost: both the car and expensive data-gathering equipment are put at risk.
-However, we can collect collision data naturally in real driving scenarios through the use of dash-cams - cheap video cameras that can be mounted to a car's dashboard.
-Typically used for insurance purposes, dash-cams have the added benefit of recording a wide variety of collisions that wouldn't be feasible to simulate. 
+However, we can collect collision data naturally in real driving scenarios through the use of dashcams - cheap video cameras that can be mounted to a car's dashboard.
+Typically used for insurance purposes, dashcams have the added benefit of recording a wide variety of collisions that wouldn't be feasible to simulate. 
 This has led to the creation of many online communities to share videos of these rare situations on websites such as Reddit, YouTube, and Imgur.
-We propose that this egocentric dash-cam video stream can be leveraged by computer vision systems to act as an affordable and commonplace sensor for automated collision prediction. 
+We propose that this egocentric dashcam video stream can be leveraged by computer vision systems to act as an affordable and commonplace sensor for automated collision prediction. 
 
-In this paper we present a software pipeline to facilitate the collection, processing and annotation of egocentric dash-cam videos from various online video repositories to produce datasets that can be used to train deep dash-cam collision prediction models.
+In this paper we present a software pipeline to facilitate the collection, processing and annotation of egocentric dashcam videos from various online video repositories to produce datasets that can be used to train deep dashcam collision prediction models.
 We aim to generate datasets that are not constrained to any regions or countries but rather provide location-agnostic data that is representative of general, global road and vehicle conditions.
 These datasets will also be collision-oriented as the majority of these videos contain collisions for people's viewing.
 Current autonomous vehicle data collection techniques typically require astronomically expensive hardware and equipment and, consequently, are rarely involved in collisions and intentionally not put in high risk environments that may lead to a collision.
@@ -94,12 +94,12 @@ This is the data we hope to capture by taking advantage of existing videos of no
 The pipeline uses web-scraping techniques to fetch the video data from these websites, along with a set of video metadata, describing the video's contents.
 We use this data, in combination with the manually annotated data in order to create the collision dataset.
 This combination allows us to take advantage of the wide variety of videos available on the internet, while still having reliable data that has been curated manually.
-As part of this data, we identify participants and bystanders, both known as agents. Participants are objects that are involved in a collision identified in the metadata, while bystanders are objects that are not.
+As part of this data, we identify participants and bystanders, both known as agents. Participants are objects that are involved in a collision identified in the metadata, while bystanders are uninvolved objects.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{RELATED WORK}
 
-Chan et al. \cite{chan2016anticipating} approach the same problem of collision prediction via egocentric dash-cam videos. They propose a novel Dynamic-Spatial-Attention Recurrent Neural Network (DSARNN) that distributes attention to localized and detected vehicles within the video and models temporal dependencies to predict the earliest frame of a potential impending collision. Released with their paper is a dataset of 678 dash-cam videos capturing areas in Taiwan. Each video is annotated with vehicle tracking bounding boxes, the vehicles that were involved in the collision and the frame of the collision. We hope to allow researchers to expand on this dataset with location-agnostic data and similar annotations.
+Chan et al. \cite{chan2016anticipating} approach the same problem of collision prediction via egocentric dashcam videos. They propose a novel Dynamic-Spatial-Attention Recurrent Neural Network (DSARNN) that distributes attention to localized and detected vehicles within the video and models temporal dependencies to predict the earliest frame of a potential impending collision. Released with their paper is a dataset of 678 dashcam videos capturing areas in Taiwan. Each video is annotated with vehicle tracking bounding boxes, the vehicles that were involved in the collision and the frame of the collision. We hope to allow researchers to expand on this dataset with location-agnostic data and similar annotations.
 
 
 
@@ -160,7 +160,7 @@ This software module is encapsulated as a library and can be reused by importing
 
 \subsection{Annotation}
 
-In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dash-cam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs we provide tools to annotate the frame the collision occurs, and bounding boxes to localize, identify and track agents in the video segment. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit any variable download resolutions. For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
+In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dashcam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs we provide tools to annotate the frame the collision occurs, and bounding boxes to localize, identify and track agents in the video segment. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit any variable download resolutions. For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
 Each video segment will eventually become a metadata item. 
 
 \subsection{Metadata}
@@ -169,29 +169,29 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
 
 \begin{itemize}
   %\item "collision\_type" contains the type of collision in the video (e.g. car vs. car)
-  \item "\texttt{description}" contains a description of the video as scraped from the video hosting website
-  \item "\texttt{state}" is a string that describes the current state of the video. One of \textit{processed}, \textit{in-progress}, \textit{NULL}
-  \item "\texttt{download\_src}" contains the site that the video was sourced from (e.g. YouTube)
-  \item "\texttt{tags}" is an object that contains custom user-defined tags on videos and additional data that is site specific
-  \item "\texttt{title}" is a string that represents the type of the video
-  \item "\texttt{url}" is the url that the video was fetched from
-  \item "\texttt{is\_split\_url}" is a boolean that is true if all of the frames of the video are covered in this metadata item and false if no
-  \item "\texttt{enum\_tags}" is a list of tags identifying the content of the video. New tags can be added while labelling and can identify anything important in the video.
-  \item "\texttt{start\_i}" is the start frame of the video that the bounding boxes are created for (if is\_split\_url is true)
-  \item "\texttt{end\_i}" is the end frame of the video the bounding boxes are created for (if is\_split\_url is true)
-  \item "\texttt{bb\_fields}" contains all bounding-box specific data.
+  \item "\texttt{description}": Description of the video as scraped from the video hosting website
+  \item "\texttt{state}": String that describes the current state of the video. One of \textit{processed}, \textit{in-progress}, \textit{NULL}
+  \item "\texttt{download\_src}": The site that the video was sourced from (e.g. YouTube)
+  \item "\texttt{tags}": Object that contains custom user-defined tags on videos and additional data that is site specific
+  \item "\texttt{title}": String that represents the type of the video
+  \item "\texttt{url}": Url that the video was fetched from
+  \item "\texttt{is\_split\_url}": Boolean that is true if all of the frames of the video are covered in this metadata item and false if no
+  \item "\texttt{enum\_tags}": List of tags identifying the content of the video. New tags can be added while labelling and can identify anything important in the video.
+  \item "\texttt{start\_i}": The start frame of the video that the bounding boxes are created for (if is\_split\_url is true)
+  \item "\texttt{end\_i}": The end frame of the video the bounding boxes are created for (if is\_split\_url is true)
+  \item "\texttt{bb\_fields}": All bounding-box specific data
   \begin{itemize}
-    \item "\texttt{collision\_locations}" a list of frame numbers indicating the collision start frames
-    \item "\texttt{resolution}" A list with 2 elements (Width,Height) representing the resolution of the video the bounding boxes were created for in number of pixels 
-    \item "\texttt{objects}" Is a list of all of the bounding boxes for each object in the video. An object being either a vehicle or pedestrian. Within each object, there is metadata specific to that object.
+    \item "\texttt{collision\_locations}": List of frame numbers indicating the collision start frames
+    \item "\texttt{resolution}": List with 2 elements (Width,Height) representing the resolution of the video the bounding boxes were created for in number of pixels 
+    \item "\texttt{objects}": List of all of the bounding boxes for each object in the video. An object being either a vehicle or pedestrian. Within each object, there is metadata specific to that object.
     \begin{itemize}
-      \item "\texttt{id}" Is a  unique numerical identifier that represents this object
-      \item "\texttt{bboxes}" Is a list of bounding boxes for this specific object. Each bounding box is represented as a 1x5 array with elements (frame number, x1, y1, x2, y2)
-      \item "\texttt{class}" Represents the class of the object, and will be one of "car", "truck", "motorcycle", "van", "pedestrian", "bus"
-      \item "\texttt{has\_collision}" Is a boolean that is true if the object is in a collision, false otherwise
+      \item "\texttt{id}": Unique numerical identifier that represents this object
+      \item "\texttt{bboxes}": List of bounding boxes for this specific object. Each bounding box is represented as a 1x5 array with elements (frame number, x1, y1, x2, y2)
+      \item "\texttt{class}": The class of the object, such as "car", "pedestrian"
+      \item "\texttt{has\_collision}": Boolean that is true if the object is in a collision, false otherwise
     \end{itemize}
   \end{itemize}
-\end{itemize}`
+\end{itemize}
 
 \begin{figure}
   \begin{lstlisting}[language=json]
@@ -242,7 +242,7 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
 
 In order to evaluate the importance of acquiring data from multiple geographical locations and under varying driving conditions around the world, we have manually collected a dataset of 223 video clips on which we will test the existing collision anticipation model, DSARNN. This dataset is comprised of 97 positive and 126 negative videos. Most of these videos represent road scenes from North America, Europe and Russia which have noticeably different characteristics than those in Taiwan. To prepare our data we follow the steps outlined by Chan et. al \cite{chan2016anticipating}. Namely, we trim videos such that they are 5 seconds long, sampled at 20 FPS, and the collision occurs at frame 90. This trimming and sampling functionality is provided within the pipeline configuration \texttt{smallcorgi\_exporter.yml}. In our experiments we train the DSARNN model on features produced by running a pre-trained VGG on each full frame and the cropped objects within the frame \cite{DBLP:journals/corr/SimonyanZ14a}. This is denoted VGG+RNN+F+D-con. in the original publication. We note that this data includes manually annotated bounding boxes, so there will be no error imposed by using automated vehicle detection and localization models.
 
-In our first experiment we merge our dataset with the dataset provided by Chan et. al. We augment their training set with 77 positives and 106 negatives, and their testing set with 20 positives and 20 negatives. We use the same training procedure as Chan et. al, namely we train for 40 epochs with a learning rate of $10^{-4}$ and a batch size of 10. Although our data contribution here is relatively small, we observe a mean time-to-accident of 2.198s at 80\% recall which is very similar to the existing results from Chan et. al. However, we observe an average precision of 66.22\% which is appreciably lower than the 73.53\% average precision reported by Chan et. al. \cite{chan2016anticipating}
+In our first experiment we merge our dataset with the dataset provided by Chan et. al. We augment their training set with 77 positives and 106 negatives, and their testing set with 20 positives and 20 negatives. We use the same training procedure as Chan et. al, namely we train for 40 epochs with a learning rate of $10^{-4}$ and a batch size of 10. Although our data contribution here is relatively small, we observe a mean time-to-collision of 2.198s at 80\% recall which is very similar to the existing results from Chan et. al. However, we observe an average precision of 66.22\% which is appreciably lower than the 73.53\% average precision reported by Chan et. al. \cite{chan2016anticipating}
 
 In our second experiment we use the provided pre-trained DSARNN model and test the performance on our entire dataset of 223 videos. We see very poor prediction performance at an average precision of 34.29\%, and in Figure \ref{fig:pr_curve} we observe poor precision at all recall values.
 
@@ -361,13 +361,9 @@ We have aggregated some statistics about our dataset to help clients understand 
 
 There are many ways that we could improve our system, such as the following:
 \begin{enumerate}
-\item Custom interpolation between input frames: One idea would be to make it easier to modify the method of interpolation between frames. Currently, linear interpolation is always used. Moreover, given a type of interpolation is stored in the metadata, we probably shouldn't store all interpolated frames, rather than just the ones the user has entered. While linear interpolation works great for entering a frame every 10 frames, supporting more interpolations could be great for faster data entry, or even for supporting affine transformations on more complex bounds.
+\item Labelling precision improvements: The current video-labelling process in the pipeline, manual bounding box drawing with linear interpolation between input frames, is prone to inserting mistaken bounding boxes that don't exactly match to the location of an object on certain frames. Automated labelling and custom interpolation would speed up the process of labelling and minimize the cases of misplaced bounding boxes. Labelling would be much faster if we had a (semi-)automated process of detecting objects and tracking them over frames. There are models for object detection that behave reasonably well which we could use, but they would still need to be augmented by a review process. For object tracking, there are simple heuristic algorithms that could be used. Being able to modify the method of interpolation between frames beyond the default linear interpolation would allow for more bounding box precision between large input frame windows. Moreover, given a type of interpolation is stored in the metadata, we probably shouldn't store all interpolated frames, rather than just the ones the user has entered. While linear interpolation works great for entering a frame every 10 frames, supporting more interpolations could be great for faster data entry, or even for supporting affine transformations on more complex bounds.
 
-\item Polyhedral bounds: It's always possible to represent a 2-dimensional polyhedron with a matrix $A\in\mathbb{R}^{n\times 2}$, and a vector $b\in\mathbb{R}^2$, given that the polyhedron can be represented by the set $\left\{x\mid Ax\leq b\right\}$. We could use this idea to store masking bounds that can be used for training Mask-RCNN networks in (near-)collision contexts. 
-
-\item Automated labelling: It would make labelling much faster if we had a (semi-)automated process of detecting objects and tracking them over frames. There are models for object detection that behave reasonably well which we could use, but they would still need to be augmented by a review process. For object tracking, there are simple heuristic algorithms that could be used. 
-
-\item Web interface: Having a web-based user interface would be advantageous for this project. While currently being used in the context of (near-)collision accident, this software has the potential to become a platform for scraping automation and collaboration. Ideally, people without a technical background would be able to contribute to the microtasking involved, and technical contributors would be in charge of creating and managing the automation and general design of the pipeline.
+\item Complete Location-Varied Dataset: Our next step is to enlarge our existing dataset of car collisions from regions all over the world, which would then use solely to form a training set and testing set for our next experiment. We could then compare the results of this experiment with location-varied data to the results from the dataset collected in Taiwan by Chan et. al.
 
 \end{enumerate}
 

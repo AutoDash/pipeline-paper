@@ -1,1 +1,12 @@
 X,Y
+car,332
+NONE,16
+bus,12
+truck,34
+motorcycle,15
+pedestrian,26
+pole,1
+van,13
+industrialMachinery,3
+train,2
+animal,1
