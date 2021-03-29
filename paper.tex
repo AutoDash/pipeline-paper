@@ -179,16 +179,16 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
   \item "\texttt{enum\_tags}" is a list of tags identifying the content of the video. New tags can be added while labelling and can identify anything important in the video.
   \item "\texttt{start\_i}" is the start frame of the video that the bounding boxes are created for (if is\_split\_url is true)
   \item "\texttt{end\_i}" is the end frame of the video the bounding boxes are created for (if is\_split\_url is true)
-  \item "\texttt{bb\_fields}" contains all bounding-box specific data.
+  \item "\texttt{bb\_fields}" contains all bounding-box specific data
   \begin{itemize}
-    \item "\texttt{collision\_locations}" a list of frame numbers indicating the collision start frames
-    \item "\texttt{resolution}" A list with 2 elements (Width,Height) representing the resolution of the video the bounding boxes were created for in number of pixels 
-    \item "\texttt{objects}" Is a list of all of the bounding boxes for each object in the video. An object being either a vehicle or pedestrian. Within each object, there is metadata specific to that object.
+    \item "\texttt{collision\_locations}" is a list of frame numbers indicating the collision start frames
+    \item "\texttt{resolution}" is a list with 2 elements (Width,Height) representing the resolution of the video the bounding boxes were created for in number of pixels 
+    \item "\texttt{objects}" is a list of all of the bounding boxes for each object in the video. An object being either a vehicle or pedestrian. Within each object, there is metadata specific to that object.
     \begin{itemize}
-      \item "\texttt{id}" Is a  unique numerical identifier that represents this object
-      \item "\texttt{bboxes}" Is a list of bounding boxes for this specific object. Each bounding box is represented as a 1x5 array with elements (frame number, x1, y1, x2, y2)
-      \item "\texttt{class}" Represents the class of the object, such as "car", "pedestrian"
-      \item "\texttt{has\_collision}" Is a boolean that is true if the object is in a collision, false otherwise
+      \item "\texttt{id}" is a  unique numerical identifier that represents this object
+      \item "\texttt{bboxes}" is a list of bounding boxes for this specific object. Each bounding box is represented as a 1x5 array with elements (frame number, x1, y1, x2, y2)
+      \item "\texttt{class}" represents the class of the object, such as "car", "pedestrian"
+      \item "\texttt{has\_collision}" is a boolean that is true if the object is in a collision, false otherwise
     \end{itemize}
   \end{itemize}
 \end{itemize}
