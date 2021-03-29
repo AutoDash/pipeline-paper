@@ -70,7 +70,7 @@ A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-Over the last decade, emphasis has been made on the need for autonomous vehicles to reduce road collisions and reckless driving. However, research into collision prediction has been slowed by the lack of egocentric collision-oriented datasets. Currently, this type of data is often created through computer generated scenarios due to the dangerous and costly nature of road collisions and data collection equipment. We provide a pipeline to assemble datasets of real vehicle collision events that have been published online to various video repositories. We specifically focus on collecting collisions recorded from front-mounted dashcam video cameras and demonstrate the importance of learning from complex road scenes and conditions globally rather than in one region. Further, we present a small prototype dataset that we have produced using our pipeline which includes egocentric dashcam vehicle footage from all over the world subject to varying visibilities, varying weather conditions, and varying settings.
+Over the last decade, emphasis has been made on the need for autonomous vehicles to reduce road collisions and reckless driving. However, research into collision prediction has been slowed by the lack of egocentric collision-oriented datasets. Currently, this type of data is often created through computer generated scenarios \cite{Kim_Lee_Hwang_Suh_2019} due to the dangerous and costly nature of road collisions and data collection equipment. We provide a pipeline to assemble datasets of real vehicle collision events that have been published online to various video repositories. We specifically focus on collecting collisions recorded from front-mounted dashcam video cameras and demonstrate the importance of learning from complex road scenes and conditions globally rather than in one region. Further, we present a small prototype dataset that we have produced using our pipeline which includes egocentric dashcam vehicle footage from all over the world subject to varying visibilities, varying weather conditions, and varying settings.
 
 \end{abstract}
 
@@ -79,8 +79,8 @@ Over the last decade, emphasis has been made on the need for autonomous vehicles
 
 In the advent of connected vehicles and autonomous transportation, it has become commonplace to equip vehicles with high-end equipment to facilitate automated collision avoidance systems.
 Using these vehicles to record collision situations has a two-fold cost: both the car and expensive data-gathering equipment are put at risk.
-However, we can collect collision data naturally in real driving scenarios through dash-cams -- cheap video cameras that can be mounted to a car's dashboard.
-Typically used for insurance purposes, dash-cams have the added benefit of recording a wide variety of real collisions that might not be effectively simulated. 
+However, we can collect collision data naturally in real driving scenarios through dashcams -- cheap video cameras that can be mounted to a car's dashboard.
+Typically used for insurance purposes, dashcams have the added benefit of recording a wide variety of real collisions that might not be effectively simulated. 
 This has led to the creation of many online communities to share videos of these rare situations on websites such as Reddit, YouTube, and Imgur.
 We propose that this egocentric dashcam video stream can be leveraged by computer vision systems to act as an affordable and commonplace sensor for automated collision prediction. 
 
