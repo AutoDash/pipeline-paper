@@ -70,6 +70,7 @@ A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo{Overall TODO: fix awkward sentences, grammatical issues }
 \begin{abstract}
 
 Over the last decade, emphasis has been made on the need for autonomous vehicles to reduce road collisions and reckless driving. However, research into collision prediction has been slowed by the lack of egocentric collision-oriented datasets. Currently, this type of data is often created through computer generated scenarios \cite{Kim_Lee_Hwang_Suh_2019} due to the dangerous and costly nature of road collisions and data collection equipment. We provide a pipeline to assemble datasets of real vehicle collision events that have been published online to various video repositories. We specifically focus on collecting collisions recorded from front-mounted dashcam video cameras and demonstrate the importance of learning from complex road scenes and conditions globally rather than in one region. Further, we present a small prototype dataset that we have produced using our pipeline which includes egocentric dashcam vehicle footage from all over the world, subject to varying visibilities, varying weather conditions, and varying settings.
@@ -87,10 +88,10 @@ This has led to the creation of many online communities to share videos of these
 We propose that this egocentric dashcam video stream can be leveraged by computer vision systems to act as an affordable and commonplace sensor for automated collision prediction. 
 
 In this paper we present a software pipeline to facilitate the collection, processing and annotation of egocentric dashcam videos from various online video repositories to produce datasets that can be used to train deep dashcam collision prediction models.
-We aim to generate datasets that are not constrained to any regions or countries but rather provide location-agnostic data that is representative of general, global road and vehicle conditions.
+We aim to generate datasets that are not constrained to any regions or countries but rather provide location-agnostic data that is representative of general, global road and vehicle conditions. \todo{Backup this claim with the location histogram, perhaps in the experiment section. If we put it there, we should reference it from here.}
 These datasets will also be collision-oriented as the majority of these videos contain collisions for people's viewing.
 Current autonomous vehicle data collection techniques typically require astronomically expensive hardware and equipment and, consequently, are rarely involved in collisions and intentionally not put in high risk environments that may lead to a collision.
-This is the data we hope to capture by taking advantage of existing videos of non-artificial collisions.
+This is the data we hope to capture by taking advantage of existing videos of non-artificial collisions. \todo{Add sentence explaining we don't care about video resolution as long as collisions and agents are clear in the video. Further support this by the fact that we aren't using the final dense classification layer in the VGG, which in turns allows us to use videos of any resolution. }
 
 The pipeline uses web-scraping techniques to fetch the video data from these websites, along with a set of video metadata, describing the video's contents.
 We use this data, in combination with the manually annotated data in order to create the collision dataset.
@@ -107,7 +108,7 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{METHODOLOGY}
 
-The software pipeline is built of multiple executors that each process or handle the data corresponding to a single video before piping the resulting data to the next executor.
+The software pipeline is built from several modular components called executors that each process or handle the data corresponding to a single video before piping the resulting data to the next executor.
 
 
 \begin{figure}[htpb]
