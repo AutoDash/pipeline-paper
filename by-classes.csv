@@ -1,14 +1,12 @@
 X,Y
 car,1728
-bus,43
+van,282
 truck,174
 motorcycle,101
 pedestrian,92
-pole,1
-van,282
-industrialMachinery,7
+bus,43
 train,6
 animal,2
-curb,1
 bicycle,2
 streetcar,2
+other,9
