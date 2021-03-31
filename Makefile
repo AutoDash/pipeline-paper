@@ -11,7 +11,8 @@ $(TARGETS): $(SOURCES) $(BIB)
 
 %.pdf: %.tex
 	@pdflatex -interaction nonstopmode -halt-on-error -file-line-error $*
-	@biber $*
+	@bibtex $*
+	@pdflatex -interaction nonstopmode -halt-on-error -file-line-error $*
 	@pdflatex -interaction nonstopmode -halt-on-error -file-line-error $*
 	@rm -f $*.log $*.aux $*.ilg $*.ind $*.toc $*.bbl $*.blg $*.out $*.asc $*.asc $*.run.xml $*.bcf
 
@@ -22,5 +23,6 @@ $(TARGETS): $(SOURCES) $(BIB)
 	@python3 scripts/make_$*.py
 
 clean:
-	@rm *.pdf
-	@rm *.csv
+	@rm -f *.log *.aux *.ilg *.ind *.toc *.bbl *.blg *.out *.asc *.asc *.run.xml *.bcf
+	@rm -f *.pdf
+	@rm -f *.csv

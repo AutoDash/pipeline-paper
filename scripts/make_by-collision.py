@@ -6,6 +6,9 @@ from functools import reduce
 from matplotlib import pyplot as plt
 
 FIREBASE_CRED_FILENAME = "autodash-9dccb-add3cdae62ea.json"
+NO_COLLISION_LABEL = "No Collision"
+MULTI_COLLISION_LABEL = "Multi Collision"
+SIMPLE_COLLISION_LABEL = "Simple Collision"
 
 def pie_by_collision(hist, data):
     (key, data) = data
@@ -13,11 +16,11 @@ def pie_by_collision(hist, data):
         return hist
     enum_tags = data['enum_tags']
     if 'MultiCollision' in enum_tags:
-        hist.update({ 'MultiCollision': hist.get('MultiCollision', 0) + 1 })
+        hist.update({ MULTI_COLLISION_LABEL: hist.get(MULTI_COLLISION_LABEL, 0) + 1 })
     elif 'NoCollision' in enum_tags:
-        hist.update({ 'NoCollision': hist.get('NoCollision', 0) + 1 })
+        hist.update({ NO_COLLISION_LABEL: hist.get(NO_COLLISION_LABEL, 0) + 1 })
     else:
-        hist.update({ 'SimpleCollision': hist.get('SimpleCollision', 0) + 1 })
+        hist.update({ SIMPLE_COLLISION_LABEL : hist.get(SIMPLE_COLLISION_LABEL, 0) + 1 })
 
     return hist
 
@@ -37,4 +40,5 @@ if __name__ == '__main__':
     pie = reduce(pie_by_collision, data, {})
     fig, ax = plt.subplots()
     ax.pie(pie.values(), labels=pie.keys(), autopct='%1.1f%%')
+    fig.tight_layout()
     fig.savefig('by-collision.png')

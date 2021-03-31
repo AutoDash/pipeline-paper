@@ -1,7 +1,11 @@
-\documentclass[letterpaper, 10 pt, conference]{IEEEconf}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}
+\overrideIEEEmargins												% Needed to meet printer requirements.
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[style=ieee]{biblatex}
 \usepackage{tikz}
 \usetikzlibrary{positioning,fit,arrows.meta,backgrounds}
 \usepackage{amsmath, amssymb, xcolor, tikz, pgfplots, pgfplotstable}
@@ -61,7 +65,6 @@ A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
          \\ \tt\small nicholas.geofroy@uwaterloo.ca, c24meng@uwaterloo.ca, vroch@uwaterloo.ca
 }
 
-\bibliography{sources}
 \begin{document}
 
 \maketitle
@@ -70,7 +73,7 @@ A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\todo{Overall TODO: fix awkward sentences, grammatical issues }
+\todo{Overall TODO: fix awkward sentences, grammatical issues. }
 \begin{abstract}
 
 Over the last decade, emphasis has been made on the need for autonomous vehicles to reduce road collisions and reckless driving. However, research into collision prediction has been slowed by the lack of egocentric collision-oriented datasets. Currently, this type of data is often created through computer generated scenarios \cite{Kim_Lee_Hwang_Suh_2019} due to the dangerous and costly nature of road collisions and data collection equipment. We provide a pipeline to assemble datasets of real vehicle collision events that have been published online to various video repositories. We specifically focus on collecting collisions recorded from front-mounted dashcam video cameras and demonstrate the importance of learning from complex road scenes and conditions globally rather than in one region. Further, we present a small prototype dataset that we have produced using our pipeline which includes egocentric dashcam vehicle footage from all over the world, subject to varying visibilities, varying weather conditions, and varying settings.
@@ -108,11 +111,10 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{METHODOLOGY}
 
-The software pipeline is built from several modular components called executors that each process or handle the data corresponding to a single video before piping the resulting data to the next executor.
-
+The software pipeline is built from several modular components called executors that each process or handle the data corresponding to a single video before piping the resulting data to the next executor. Figure \ref{fig:pr_curve} illustrates the organization of the pipeline in its default configuration.
 
 \begin{figure}[htpb]
-		\centering
+	\centering
     \tikzset{
         module/.style={%
             draw, rounded corners,
@@ -120,7 +122,7 @@ The software pipeline is built from several modular components called executors 
             minimum height=7mm,
             font=\sffamily
             },
-        module/.default=2cm,
+        module/.default=1cm,
         >=LaTeX
     }
     \begin{tikzpicture}[
@@ -139,10 +141,9 @@ The software pipeline is built from several modular components called executors 
       \draw[->] (labeller)--(uploader);
 
     \end{tikzpicture}
-		\caption{Architecture of the default pipeline}
-		\label{fig:obj-by-class}
+		\caption{Architecture of the pipeline in its default configuration. Each node in the diagram represents a stage of the pipeline, consisting of a single executor or series of executors.}
+		\label{fig:pipeline-architecture}
 \end{figure}
-
 
 \subsection{Video Collection}
 
@@ -171,7 +172,7 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
 
 \begin{itemize}
   %\item "collision\_type" contains the type of collision in the video (e.g. car vs. car)
-  \item "\texttt{description}": Description of the video as scraped from the video hosting website
+  \item "\texttt{}": Description of the video as scraped from the video hosting website
   \item "\texttt{state}": String that describes the current state of the video. One of \textit{processed}, \textit{in-progress}, \textit{NULL}
   \item "\texttt{download\_src}": The site that the video was sourced from (e.g. YouTube)
   \item "\texttt{tags}": Object that contains custom user-defined tags on videos and additional data that is site specific
@@ -196,7 +197,7 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
 \end{itemize}
 
 \begin{figure}
-  \begin{lstlisting}[language=json]
+  \begin{lstlisting}[language=json,xleftmargin=5mm]
 {
   "description":"",
   "download_src":"YouTube",
@@ -228,7 +229,7 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
   }
 }
   \end{lstlisting}
-    \caption{Example Metadata Produced by the Pipeline}
+    \caption{Example metadata produced by the pipeline}
     \label{metadata_example}
 \end{figure}
 
@@ -258,10 +259,6 @@ In our second experiment we use the provided pre-trained DSARNN model and test t
 These experiments seem to support the notion that in order for a collision prediction model to be generally effective in practice, it must be trained on collisions and complex roads scenes from varying regions and road conditions around the world, which is what we hope to achieve with this data collection pipeline.
 
 
-
-
-
-
 \pgfplotstableread[col sep=comma]{by-classes.csv}\byclass
 \pgfplotstableread[col sep=comma]{by-actors.csv}\byactors
 \pgfplotstableread[col sep=comma]{by-agents.csv}\byagents
@@ -282,7 +279,7 @@ We have aggregated some statistics about our dataset to help clients understand 
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byclass;
     \end{axis}
     \end{tikzpicture}
-		\caption{Objects grouped by class}
+		\caption{Videos in dataset grouped by object class}
 		\label{fig:obj-by-class}
 \end{figure}
 
@@ -300,7 +297,7 @@ We have aggregated some statistics about our dataset to help clients understand 
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byactors;
     \end{axis}
     \end{tikzpicture}
-		\caption{Videos grouped by number of participants}
+		\caption{Videos in dataset grouped by number of participants}
 		\label{fig:vids-by-participant}
 \end{figure}
 
@@ -317,7 +314,7 @@ We have aggregated some statistics about our dataset to help clients understand 
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byagents;
     \end{axis}
     \end{tikzpicture}
-		\caption{Videos grouped by number of agents}
+		\caption{Videos in dataset grouped by number of agents}
 		\label{fig:vids-by-agents}
 \end{figure}
 
@@ -335,26 +332,31 @@ We have aggregated some statistics about our dataset to help clients understand 
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byduration;
     \end{axis}
     \end{tikzpicture}
-		\caption{Videos grouped by duration}
+		\caption{Videos in dataset grouped by duration}
 		\label{fig:vids-by-duration}
 \end{figure}
 
 \begin{figure}[htpb]
 		\centering
     \includegraphics[width=3in]{by-collision.png}
-		\caption{Videos by collision}
+		\caption{All videos in database grouped by collision type}
 		\label{fig:vids-by-collision}
 \end{figure}
 
 \begin{figure}[htpb]
 		\centering
     \includegraphics[width=3in]{by-camera.png}
-		\caption{Videos by camera}
+		\caption{All videos in database grouped by camera type}
 		\label{fig:vids-by-camera}
 \end{figure}
 
+\todo{Organize figures better, crop out excess whitespace, resize them and place them within the column of the page.}
 \todo{Explain the "other" category in the class histogram. These are stationary/non-vehicular objects.}
-\todo{Add a paragraph explaining the key characteristics of Figures 5-10.}
+\todo{Explain the distinctions between the different types of collisions in the collision chart.}
+\todo{Add chart showing videos by source (Figure 11).}
+\todo{Move Figures 5-11 to Methodology - Video Collection.}
+\todo{Reduce caption size for each figure.}
+\todo{Add a paragraph explaining the key characteristics of Figures 5-11.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -378,8 +380,8 @@ There are many ways that we could improve our system, such as the following:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \nocite{*}
-\printbibliography
+\bibliographystyle{IEEEtran}
+\bibliography{sources}
 
 \end{document}
