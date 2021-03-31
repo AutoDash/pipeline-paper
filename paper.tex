@@ -116,6 +116,7 @@ The software pipeline is built from several modular components called executors 
 \begin{figure}[htpb]
 	\centering
     \tikzset{
+    	node distance = 6m and 0cm,
         module/.style={%
             draw, rounded corners,
             minimum width=#1,
@@ -135,10 +136,10 @@ The software pipeline is built from several modular components called executors 
       \node[module, below=of downloader] (splitter) {Video-Splitter};
       \node[module, below=of splitter] (labeller) {Video-Labelling Tool};
       \node[module, below=of labeller] (uploader) {Data-Uploader};
-      \draw[->] (crawler)--(downloader);
-      \draw[->] (downloader)--(splitter);
-      \draw[->] (splitter)--(labeller);
-      \draw[->] (labeller)--(uploader);
+      \draw[->] (crawler) -- (downloader);
+      \draw[->] (downloader) -- (splitter);
+      \draw[->] (splitter) -- (labeller);
+      \draw[->] (labeller) -- (uploader);
 
     \end{tikzpicture}
 		\caption{Architecture of the pipeline in its default configuration. Each node in the diagram represents a stage of the pipeline, consisting of a single executor or series of executors.}
