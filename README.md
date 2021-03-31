@@ -16,7 +16,7 @@ On Ubuntu, you can install all the other required packages by running
 sudo apt install texlive texlive-latex-recommended \
   texlive-science texlive-publishers texlive-latex-extra  \
   texlive-bibtex-extra texlive-fonts-extra \
-  biber
+  biber dvipng
 ```
 Or alternatively, (if you have a lot of disk space)
 ```bash

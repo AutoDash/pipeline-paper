@@ -8,6 +8,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{tikz}
 \usetikzlibrary{positioning,fit,arrows.meta,backgrounds}
+\usepackage{graphicx}
 \usepackage{amsmath, amssymb, xcolor, tikz, pgfplots, pgfplotstable}
 
 \newcommand{\todo}[1]{{\color{red}#1}}
@@ -116,7 +117,7 @@ The software pipeline is built from several modular components called executors 
 \begin{figure}[htpb]
 	\centering
     \tikzset{
-    	node distance = 6m and 0cm,
+    	node distance = 6mm and 0cm,
         module/.style={%
             draw, rounded corners,
             minimum width=#1,
@@ -339,14 +340,14 @@ We have aggregated some statistics about our dataset to help clients understand 
 
 \begin{figure}[htpb]
 		\centering
-    \includegraphics[width=3in]{by-collision.png}
+    \includegraphics[width=3in,trim={0 1cm 0 1cm},clip]{by-collision.png}
 		\caption{All videos in database grouped by collision type}
 		\label{fig:vids-by-collision}
 \end{figure}
 
 \begin{figure}[htpb]
 		\centering
-    \includegraphics[width=3in]{by-camera.png}
+    \includegraphics[width=3in,trim={0 1cm 0 1cm},clip]{by-camera.png}
 		\caption{All videos in database grouped by camera type}
 		\label{fig:vids-by-camera}
 \end{figure}
