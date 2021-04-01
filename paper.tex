@@ -77,7 +77,7 @@ A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
 \todo{Overall TODO: fix awkward sentences, grammatical issues. }
 \begin{abstract}
 
-Over the last decade, emphasis has been made on the need for autonomous vehicles to reduce road collisions and reckless driving. However, research into collision prediction has been slowed by the lack of egocentric collision-oriented datasets. Currently, this type of data is often created through computer generated scenarios \cite{Kim_Lee_Hwang_Suh_2019} due to the dangerous and costly nature of road collisions and data collection equipment. We provide a pipeline to assemble datasets of real vehicle collision events that have been published online to various video repositories. We specifically focus on collecting collisions recorded from front-mounted dashcam video cameras and demonstrate the importance of learning from complex road scenes and conditions globally rather than in one region. Further, we present a small prototype dataset that we have produced using our pipeline which includes egocentric dashcam vehicle footage from all over the world, subject to varying visibilities, varying weather conditions, and varying settings.
+Over the last decade, emphasis has been made on the need for autonomous vehicles to reduce road collisions and reckless driving. However, research into collision prediction has been slowed by the lack of egocentric collision-oriented datasets. Currently, this type of data is often created through computer generated scenarios \cite{Kim_Lee_Hwang_Suh_2019} due to the dangerous and costly nature of road collisions and data collection equipment. We provide a pipeline to assemble datasets of real vehicle collision events that have been published online to various video repositories. We specifically focus on collecting footage of collisions recorded from front-mounted dashcam video cameras and demonstrate the importance of learning from complex road scenes and conditions globally rather than in one region. Further, we present a small prototype dataset that we have produced using our pipeline which includes egocentric dashcam vehicle footage from all over the world, subject to varying visibilities, varying weather conditions, and varying settings.
 
 \end{abstract}
 
@@ -114,7 +114,7 @@ Chan et al. \cite{chan2016anticipating} approach the same problem of collision p
 
 The software pipeline is built from several modular components called executors that each process or handle the data corresponding to a single video before piping the resulting data to the next executor. Figure \ref{fig:pr_curve} illustrates the organization of the pipeline in its default configuration.
 
-\begin{figure}[htpb]
+\begin{figure}[htbp]
 	\centering
     \tikzset{
     	node distance = 6mm and 0cm,
@@ -235,9 +235,9 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
     \label{metadata_example}
 \end{figure}
 
-\begin{figure}[htpb]
+\begin{figure}[htbp]
 		\centering
-    \includegraphics[width=0.48\textwidth]{example_gui_tool.png}
+    \includegraphics[width=0.46\textwidth]{example_gui_tool.png}
 		\caption{GUI tool to facilitate annotation}
 		\label{fig:example_gui_tool-png}
 \end{figure}
@@ -251,7 +251,7 @@ In our first experiment we merge our dataset with the dataset provided by Chan e
 
 In our second experiment we use the provided pre-trained DSARNN model and test the performance on our entire dataset of 223 videos. We see very poor prediction performance at an average precision of 34.29\%, and in Figure \ref{fig:pr_curve} we observe poor precision at all recall values.
 
-\begin{figure}[htpb]
+\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=0.5\textwidth]{prcurve.png}
 		\caption{Pre-trained DSARNN Precision-Recall curve on prototype dataset}
@@ -268,7 +268,7 @@ These experiments seem to support the notion that in order for a collision predi
 
 We have aggregated some statistics about our dataset to help clients understand various distributions in the data. While these distributions may be representative of online collision footage, they are not necessarily representative of real world collisions. 
 
-\begin{figure}[htpb]
+\begin{figure}[htbp]
 		\centering
     \begin{tikzpicture}
     \begin{axis}[
@@ -283,11 +283,11 @@ We have aggregated some statistics about our dataset to help clients understand 
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byclass;
     \end{axis}
     \end{tikzpicture}
-		\caption{Videos in dataset grouped by object class}
+		\caption{Distribution of videos in dataset by object class}
 		\label{fig:obj-by-class}
 \end{figure}
 
-\begin{figure}[htpb]
+\begin{figure}[htbp]
 		\centering
     \begin{tikzpicture}
     \begin{axis}[
@@ -302,11 +302,11 @@ We have aggregated some statistics about our dataset to help clients understand 
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byactors;
     \end{axis}
     \end{tikzpicture}
-		\caption{Videos in dataset grouped by number of participants}
+		\caption{Distribution of videos in dataset by number of participants}
 		\label{fig:vids-by-participant}
 \end{figure}
 
-\begin{figure}[htpb]
+\begin{figure}[htbp]
 		\centering
     \begin{tikzpicture}
     \begin{axis}[
@@ -321,11 +321,11 @@ We have aggregated some statistics about our dataset to help clients understand 
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byagents;
     \end{axis}
     \end{tikzpicture}
-		\caption{Videos in dataset grouped by number of agents}
+		\caption{Distribution of videos in dataset by number of agents}
 		\label{fig:vids-by-agents}
 \end{figure}
 
-\begin{figure}[htpb]
+\begin{figure}[htbp]
 		\centering
     \begin{tikzpicture}
     \begin{axis}[
@@ -341,28 +341,70 @@ We have aggregated some statistics about our dataset to help clients understand 
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byduration;
     \end{axis}
     \end{tikzpicture}
-		\caption{Videos in dataset grouped by duration}
+		\caption{Distribution of videos in dataset by duration}
 		\label{fig:vids-by-duration}
 \end{figure}
 
-\begin{figure}[htpb]
+\begin{figure}[htbp]
 		\centering
     \includegraphics[width=0.46\textwidth,trim={0 1cm 0 0.5cm},clip]{by-collision.png}
-		\caption{All videos in database grouped by collision type}
+		\caption{Distribution of videos in database by collision type}
 		\label{fig:vids-by-collision}
 \end{figure}
 
-\begin{figure}[htpb]
+\begin{figure}[htbp]
 		\centering
     \includegraphics[width=0.46\textwidth,trim={0 1cm 0 1cm},clip]{by-camera.png}
-		\caption{All videos in database grouped by camera type}
+		\caption{Distribution of videos in database by camera type}
 		\label{fig:vids-by-camera}
 \end{figure}
+
+\begin{table}[htbp]
+	\caption{Distribution of videos in database by download source}
+	\label{vids-by-source}
+	\begin{center}
+		\begin{tabular}{|c|c|}
+			\hline
+			Download source & Percentage of videos \\
+			\hline
+			youtube.com & 98.40\% \\
+			\hline
+			imgur.com & 0.85\% \\
+			\hline
+			gfycat.com & 0.47\% \\
+			\hline
+			streamable.com & 0.28\% \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Distribution of videos in dataset by geographical region}
+	\label{vids-by-region}
+	\begin{center}
+		\begin{tabular}{|c|c|}
+			\hline
+			Region & Percentage of videos \\
+			\hline
+			North America & 48.13\% \\
+			\hline
+			Europe & 24.30\% \\
+			\hline
+			Russia & 19.16\% \\
+			\hline
+			Asia & 4.67\% \\
+			\hline
+			Australia & 3.74\% \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
 
 \todo{Organize figures better, crop out excess whitespace, resize them and place them within the column of the page.}
 \todo{Explain the "other" category in the class histogram. These are stationary/non-vehicular objects.}
 \todo{Explain the distinctions between the different types of collisions in the collision chart.}
-\todo{Add chart showing videos by source (Figure 11).}
+\todo{Add Figure 11 (table) showing videos by source (98.4\% YouTube, 0.47\% gfycat.com, 0.85\% imgur.com, 0.28\% streamable.com)}
 \todo{Move Figures 5-11 to Methodology - Video Collection.}
 \todo{Reduce caption size for each figure.}
 \todo{Add a paragraph explaining the key characteristics of Figures 5-11.}
