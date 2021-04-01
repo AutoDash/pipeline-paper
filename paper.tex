@@ -174,16 +174,16 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
 
 \begin{itemize}
   %\item "collision\_type" contains the type of collision in the video (e.g. car vs. car)
-  \item "\texttt{}": Description of the video as scraped from the video hosting website
-  \item "\texttt{state}": String that describes the current state of the video. One of \textit{processed}, \textit{in-progress}, \textit{NULL}
+  \item "\texttt{description}": Description of the video as scraped from the video hosting website
+  \item "\texttt{state}": String that describes the current labelling state of the video. One of \textit{processed}, \textit{in-progress}, \textit{NULL}
   \item "\texttt{download\_src}": The site that the video was sourced from (e.g. YouTube)
   \item "\texttt{tags}": Object that contains custom user-defined tags on videos and additional data that is site specific
-  \item "\texttt{title}": String that represents the type of the video
+  \item "\texttt{title}": The title of the video from the video hosting website
   \item "\texttt{url}": Url that the video was fetched from
-  \item "\texttt{is\_split\_url}": Boolean that is true if all of the frames of the video are covered in this metadata item and false if no
+  \item "\texttt{is\_split\_url}": Boolean that is true if the video has been segmented into multiple \texttt{MetaDataItem} objects during labelling
   \item "\texttt{enum\_tags}": List of tags identifying the content of the video. New tags can be added while labelling and can identify anything important in the video.
-  \item "\texttt{start\_i}": The start frame of the video that the bounding boxes are created for (if is\_split\_url is true)
-  \item "\texttt{end\_i}": The end frame of the video the bounding boxes are created for (if is\_split\_url is true)
+  \item "\texttt{start\_i}": The start frame of the video segment that the bounding boxes are created for (if is\_split\_url is true)
+  \item "\texttt{end\_i}": The end frame of the video segment the bounding boxes are created for (if is\_split\_url is true)
   \item "\texttt{bb\_fields}": All bounding-box specific data
   \begin{itemize}
     \item "\texttt{collision\_locations}": List of frame numbers indicating the collision start frames
