@@ -12,7 +12,7 @@ SIMPLE_COLLISION_LABEL = "Simple\ Collision"
 
 def pie_by_collision(hist, data):
     (key, data) = data
-    if not data.get('enum_tags'):
+    if data.get('is_cancelled', True) or not data.get('enum_tags'):
         return hist
     enum_tags = data['enum_tags']
     if 'MultiCollision' in enum_tags:

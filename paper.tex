@@ -74,7 +74,6 @@ A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\todo{Overall TODO: fix awkward sentences, grammatical issues. }
 \begin{abstract}
 
 Over the last decade, emphasis has been made on the need for autonomous vehicles to reduce road collisions and reckless driving. However, research into collision prediction has been slowed by the lack of egocentric collision-oriented datasets. Currently, this type of data is often created through computer generated scenarios \cite{Kim_Lee_Hwang_Suh_2019} due to the dangerous and costly nature of road collisions and data collection equipment. We provide a pipeline to assemble datasets of real vehicle collision events that have been published online to various video repositories. We specifically focus on collecting footage of collisions recorded from front-mounted dashcam video cameras and demonstrate the importance of learning from complex road scenes and conditions globally rather than in one region. Further, we present a small prototype dataset that we have produced using our pipeline which includes egocentric dashcam vehicle footage from all over the world, subject to varying visibilities, varying weather conditions, and varying settings.
@@ -92,15 +91,17 @@ This has led to the creation of many online communities to share videos of these
 We propose that this egocentric dashcam video stream can be leveraged by computer vision systems to act as an affordable and commonplace sensor for automated collision prediction. 
 
 In this paper we present a software pipeline to facilitate the collection, processing and annotation of egocentric dashcam videos from various online video repositories to produce datasets that can be used to train deep dashcam collision prediction models.
-We aim to generate datasets that are not constrained to any regions or countries but rather provide location-agnostic data that is representative of general, global road and vehicle conditions. \todo{Backup this claim with the location histogram, perhaps in the experiment section. If we put it there, we should reference it from here.}
+We aim to generate datasets that are not constrained to any regions or countries but rather provide location-agnostic data that is representative of general, global road and vehicle conditions.
 These datasets will also be collision-oriented as the majority of these videos contain collisions for people's viewing.
 Current autonomous vehicle data collection techniques typically require astronomically expensive hardware and equipment and, consequently, are rarely involved in collisions and intentionally not put in high risk environments that may lead to a collision.
-This is the data we hope to capture by taking advantage of existing videos of non-artificial collisions. \todo{Add sentence explaining we don't care about video resolution as long as collisions and agents are clear in the video. Further support this by the fact that we aren't using the final dense classification layer in the VGG, which in turns allows us to use videos of any resolution. }
+Thus, our goal is to capture this data by taking advantage of existing videos of real-world collisions. 
 
 The pipeline uses web-scraping techniques to fetch the video data from these websites, along with a set of video metadata, describing the video's contents.
-We use this data, in combination with the manually annotated data in order to create the collision dataset.
+We use this data, in combination with the manually annotated data in order to create a prototype collision dataset of dashcam video samples.
 This combination allows us to take advantage of the wide variety of videos available on the internet, while still having reliable data that has been curated manually.
-As part of this data, we identify participants and bystanders, both known as agents. Participants are objects that are involved in a collision identified in the metadata, while bystanders are uninvolved objects.
+As part of this data, we identify participants and bystanders, both known as agents. Participants are objects that are involved in a collision identified in the metadata, while bystanders are uninvolved objects. 
+
+It is worthwhile to note that in collecting samples for our prototype dataset, we do not impose a minimum video resolution threshold. We mitigate this by only collecting samples which contain clearly identifiable agents. This allows us to maximize the amount of data that we can feasibly include in our dataset. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{RELATED WORK}
@@ -165,8 +166,8 @@ This software module is encapsulated as a library and can be reused by importing
 
 \subsection{Annotation}
 
-In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dashcam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs we provide tools to annotate the frame the collision occurs, and bounding boxes to localize, identify and track agents in the video segment. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit any variable download resolutions. For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
-Each video segment will eventually become a metadata item. 
+In addition to collection and preprocessing, a core component of our pipeline is a GUI tool that facilitates the manual annotation of the dashcam videos, and quick manual filtering of non-dashcam and irrelevant videos. Following Chan et al.\cite{chan2016anticipating}, if a collision occurs, we provide tools to annotate the frame where the collision occurs and bounding boxes to localize, identify and track agents in the video segment. Object tracking bounding boxes can be linearly interpolated from manual start and end points to improve ease of labelling. We also save the video resolution at which the video was annotated to ensure bounding box annotations can always be scaled to fit variable download resolutions. For long-form videos that may contain multiple collision events or irrelevant video segments, such as compilation videos or videos with substantial editing and transitions, we provide a video clipping feature to demarcate the collision events from which we extract and generate distinct data points. 
+Each video segment will eventually become a metadata item. Figure \ref{fig:example_gui_tool-png} shows an example of the GUI tool in usage.
 
 \subsection{Metadata}
 After all of the previous steps have been completed, the pipeline is able to produce a complete metadata object.
@@ -198,7 +199,14 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
   \end{itemize}
 \end{itemize}
 
-\begin{figure}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.46\textwidth]{example_gui_tool.png}
+	\caption{GUI tool to facilitate annotation}
+	\label{fig:example_gui_tool-png}
+\end{figure}
+
+\begin{figure}[htbp]
   \begin{lstlisting}[language=json,xleftmargin=5mm]
 {
   "description":"",
@@ -235,131 +243,21 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
     \label{metadata_example}
 \end{figure}
 
-\begin{figure}[htbp]
-		\centering
-    \includegraphics[width=0.46\textwidth]{example_gui_tool.png}
-		\caption{GUI tool to facilitate annotation}
-		\label{fig:example_gui_tool-png}
-\end{figure}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{EXPERIMENT}
 
-In order to evaluate the importance of acquiring data from multiple geographical locations and under varying driving conditions around the world, we have manually collected a dataset of 223 video clips on which we will test the existing collision anticipation model, DSARNN. This dataset is comprised of 97 positive and 126 negative videos. Most of these videos represent road scenes from North America, Europe and Russia which have noticeably different characteristics than those in Taiwan. To prepare our data we follow the steps outlined by Chan et. al \cite{chan2016anticipating}. Namely, we trim videos such that they are 5 seconds long, sampled at 20 FPS, and the collision occurs at frame 90. This trimming and sampling functionality is provided within the pipeline configuration \texttt{smallcorgi\_exporter.yml}. In our experiments we train the DSARNN model on features produced by running a pre-trained VGG on each full frame and the cropped objects within the frame \cite{DBLP:journals/corr/SimonyanZ14a}. This is denoted VGG+RNN+F+D-con. in the original publication. We note that this data includes manually annotated bounding boxes, so there will be no error imposed by using automated vehicle detection and localization models.
-
-In our first experiment we merge our dataset with the dataset provided by Chan et. al. We augment their training set with 77 positives and 106 negatives, and their testing set with 20 positives and 20 negatives. We use the same training procedure as Chan et. al, namely we train for 40 epochs with a learning rate of $10^{-4}$ and a batch size of 10. Although our data contribution here is relatively small, we observe a mean time-to-collision of 2.198s at 80\% recall which is very similar to the existing results from Chan et. al. However, we observe an average precision of 66.22\% which is appreciably lower than the 73.53\% average precision reported by Chan et. al. \cite{chan2016anticipating}
-
-In our second experiment we use the provided pre-trained DSARNN model and test the performance on our entire dataset of 223 videos. We see very poor prediction performance at an average precision of 34.29\%, and in Figure \ref{fig:pr_curve} we observe poor precision at all recall values.
-
-\begin{figure}[htbp]
-		\centering
-		\includegraphics[width=0.5\textwidth]{prcurve.png}
-		\caption{Pre-trained DSARNN Precision-Recall curve on prototype dataset}
-		\label{fig:pr_curve}
-\end{figure}
-
-These experiments seem to support the notion that in order for a collision prediction model to be generally effective in practice, it must be trained on collisions and complex roads scenes from varying regions and road conditions around the world, which is what we hope to achieve with this data collection pipeline.
-
+\subsection{Prototype Dataset}
+\label{section-prototype-dataset}
+In order to evaluate the importance of acquiring data from multiple geographical locations and under varying driving conditions around the world, we have built a prototype dataset of 223 video clips using our pipeline on which we will test the existing collision anticipation model, DSARNN. This dataset is comprised of 97 positive and 126 negative videos. Most of these videos represent road scenes from North America, Europe and Russia which have noticeably different characteristics than those in Taiwan. To prepare our data we follow the steps outlined by Chan et. al \cite{chan2016anticipating}. Namely, we trim videos such that they are 5 seconds long, sampled at 20 FPS, and the collision occurs at frame 90. This trimming and sampling functionality is provided within the pipeline configuration \texttt{smallcorgi\_exporter.yml}. In our experiments we train the DSARNN model on features produced by running a pre-trained VGG on each full frame and the cropped objects within the frame \cite{DBLP:journals/corr/SimonyanZ14a}. This is denoted VGG+RNN+F+D-con. in the original publication. We note that this data includes manually annotated bounding boxes, so there will be no error imposed by using automated vehicle detection and localization models.
 
 \pgfplotstableread[col sep=comma]{by-classes.csv}\byclass
 \pgfplotstableread[col sep=comma]{by-actors.csv}\byactors
 \pgfplotstableread[col sep=comma]{by-agents.csv}\byagents
 \pgfplotstableread[col sep=comma]{by-duration.csv}\byduration
 
-We have aggregated some statistics about our dataset to help clients understand various distributions in the data. While these distributions may be representative of online collision footage, they are not necessarily representative of real world collisions. 
+We have aggregated some statistics about our database and dataset to help clients understand the pertinent distributions in the data. While these distributions may be representative of online collision footage, they are not necessarily representative of real world collisions. Note that the total number of videos represented by the histograms is a superset of the number of videos in the final prototype dataset as it includes videos that were ultimately unsuitable for our collision prediction experiments. Thus we denote this superset as the \textit{pre-processed prototype dataset}.
 
-\begin{figure}[htbp]
-		\centering
-    \begin{tikzpicture}
-    \begin{axis}[
-      title={Objects by class},
-      ylabel={Frequency (\# of objects)},
-      ymin=-50,
-      ymax=1800,
-      xtick=data,
-      xticklabels from table={\byclass}{X},
-      xticklabel style={rotate=50,anchor=east,yshift=-2mm}
-    ]
-    \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byclass;
-    \end{axis}
-    \end{tikzpicture}
-		\caption{Distribution of videos in dataset by object class}
-		\label{fig:obj-by-class}
-\end{figure}
-
-\begin{figure}[htbp]
-		\centering
-    \begin{tikzpicture}
-    \begin{axis}[
-      title={Videos by participant},
-      xlabel={Number of participants},
-      ylabel={Frequency (\# of videos)},
-      ymin=-5,
-      ymax=175,
-      xtick=data,
-      xticklabels from table={\byactors}{X}
-    ]
-    \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byactors;
-    \end{axis}
-    \end{tikzpicture}
-		\caption{Distribution of videos in dataset by number of participants}
-		\label{fig:vids-by-participant}
-\end{figure}
-
-\begin{figure}[htbp]
-		\centering
-    \begin{tikzpicture}
-    \begin{axis}[
-      title={Videos by agents},
-      xlabel={Number of agents},
-      ylabel={Frequency (\# of videos)},
-      ymin=-10,
-      ymax=270,
-      xtick=data,
-      xticklabels from table={\byagents}{X}
-    ]
-    \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byagents;
-    \end{axis}
-    \end{tikzpicture}
-		\caption{Distribution of videos in dataset by number of agents}
-		\label{fig:vids-by-agents}
-\end{figure}
-
-\begin{figure}[htbp]
-		\centering
-    \begin{tikzpicture}
-    \begin{axis}[
-      title={Videos by duration},
-      xlabel={Duration (in frames)},
-      ylabel={Frequency (\# of videos)},
-      xtick=data,
-      ymin=-5,
-      ymax=130,
-      xticklabels from table={\byduration}{X},
-      xticklabel style = {rotate=45,anchor=east,yshift=-2mm}
-    ]
-    \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byduration;
-    \end{axis}
-    \end{tikzpicture}
-		\caption{Distribution of videos in dataset by duration}
-		\label{fig:vids-by-duration}
-\end{figure}
-
-\begin{figure}[htbp]
-		\centering
-    \includegraphics[width=0.46\textwidth,trim={0 1cm 0 0.5cm},clip]{by-collision.png}
-		\caption{Distribution of videos in database by collision type}
-		\label{fig:vids-by-collision}
-\end{figure}
-
-\begin{figure}[htbp]
-		\centering
-    \includegraphics[width=0.46\textwidth,trim={0 1cm 0 1cm},clip]{by-camera.png}
-		\caption{Distribution of videos in database by camera type}
-		\label{fig:vids-by-camera}
-\end{figure}
-
-\begin{table}[htbp]
+\begin{table}[!h]
 	\caption{Distribution of videos in database by download source}
 	\label{vids-by-source}
 	\begin{center}
@@ -367,7 +265,7 @@ We have aggregated some statistics about our dataset to help clients understand 
 			\hline
 			Download source & Percentage of videos \\
 			\hline
-			youtube.com & 98.40\% \\
+			youtube.com & \textbf{98.40\%} \\
 			\hline
 			imgur.com & 0.85\% \\
 			\hline
@@ -379,8 +277,8 @@ We have aggregated some statistics about our dataset to help clients understand 
 	\end{center}
 \end{table}
 
-\begin{table}[htbp]
-	\caption{Distribution of videos in dataset by geographical region}
+\begin{table}[!h]
+	\caption{Distribution of videos in pre-processed prototype dataset by geographical region}
 	\label{vids-by-region}
 	\begin{center}
 		\begin{tabular}{|c|c|}
@@ -401,14 +299,125 @@ We have aggregated some statistics about our dataset to help clients understand 
 	\end{center}
 \end{table}
 
-\todo{Organize figures better, crop out excess whitespace, resize them and place them within the column of the page.}
-\todo{Explain the "other" category in the class histogram. These are stationary/non-vehicular objects.}
-\todo{Explain the distinctions between the different types of collisions in the collision chart.}
-\todo{Add Figure 11 (table) showing videos by source (98.4\% YouTube, 0.47\% gfycat.com, 0.85\% imgur.com, 0.28\% streamable.com)}
-\todo{Move Figures 5-11 to Methodology - Video Collection.}
-\todo{Reduce caption size for each figure.}
-\todo{Add a paragraph explaining the key characteristics of Figures 5-11.}
+From Table \ref{vids-by-source}, it is clear that the vast majority of videos that have been processed through our pipeline and cataloged in our database were obtained from YouTube. It can also be seen that the YouTube and Reddit downloaders are capable of scraping various other online repositories such as Imgur, Gfycat and Streamable. 
 
+From Table \ref{vids-by-region}, we can see that our prototype dataset consists of dashcam footage from a reasonably well-balanced distribution of geographical regions. This also implies a diverse representation in driving conditions due to the various differences in climate and infrastructure amongst these regions.
+
+\begin{figure}[!h]
+	\centering
+	\begin{tikzpicture}
+	\begin{axis}[
+	title={Objects by class},
+	ylabel={Frequency (\# of objects)},
+	ymin=-50,
+	ymax=1800,
+	xtick=data,
+	xticklabels from table={\byclass}{X},
+	xticklabel style={rotate=50,anchor=east,yshift=-2mm}
+	]
+	\addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byclass;
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Distribution of videos in pre-processed prototype dataset by object class}
+	\label{fig:obj-by-class}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\begin{tikzpicture}
+	\begin{axis}[
+	title={Videos by participant},
+	xlabel={Number of participants},
+	ylabel={Frequency (\# of videos)},
+    ymin=-5,
+	ymax=175,
+	xtick=data,
+	xticklabels from table={\byactors}{X}
+	]
+	\addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byactors;
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Distribution of videos in pre-processed prototype dataset by number of participants}
+	\label{fig:vids-by-participant}
+\end{figure}
+
+In Figure \ref{fig:obj-by-class}, we see that there are several types of objects which have been identified as agents in our prototype dataset. Among these, the most common are motorized vehicles and pedestrians as one would intuitively expect. A number of stationary, inanimate objects such as industrial machinery and poles were noteworthy as they were involved in collisions. These have been aggregated into the "other" category.
+
+In Figure \ref{fig:vids-by-participant}, it can be seen that there is a wide range in the distribution of the number of participants in each sample of our dataset. We also observe that it is more common for no collisions to occur than any particular non-zero number of participants to be present in a sample.
+
+In Figure \ref{fig:vids-by-agents}, we observe that it is most common for samples to contain either 2 agents or no agents at all. This is implied by the fact that videos with only 1 agent cannot contain a collision. These are less likely to be interesting and in turn, scraped by our pipeline.
+
+\begin{figure}[!h]
+	\centering
+	\begin{tikzpicture}
+	\begin{axis}[
+	title={Videos by agents},
+	xlabel={Number of agents},
+	ylabel={Frequency (\# of videos)},
+    ymin=-10,
+	ymax=270,
+	xtick=data,
+	xticklabels from table={\byagents}{X}
+	]
+	\addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byagents;
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Distribution of videos in prototype dataset by number of agents}
+	\label{fig:vids-by-agents}
+\end{figure}
+
+In Figure \ref{fig:vids-by-duration}, we can clearly see that there is a roughly standard normal distribution in the number of videos by duration, with a mean, median and mode at around 352 frames. This suggests that the pipeline favors videos which tend to be shorter on average. At an average video framerate of 30 FPS, this equates to a mean duration of just over 11 seconds. In section \ref{section-prototype-dataset}, it was mentioned that clips were cropped to 5 seconds in the prototype dataset, therefore this is a favorable characteristic as it helps reduce the amount of necessary processing.
+
+\begin{figure}[!h]
+	\centering
+	\begin{tikzpicture}
+	\begin{axis}[
+	title={Videos by duration},
+	xlabel={Duration (in frames)},
+	ylabel={Frequency (\# of videos)},
+	xtick=data,
+    ymin=-5,
+	ymax=130,
+	xticklabels from table={\byduration}{X},
+	xticklabel style = {rotate=45,anchor=east,yshift=-2mm}
+	]
+	\addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byduration;
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Distribution of videos in prototype dataset by duration}
+	\label{fig:vids-by-duration}
+\end{figure}
+
+Figures \ref{fig:vids-by-collision} and \ref{fig:vids-by-camera} outline key characteristics about our database at large. Figure \ref{fig:vids-by-collision} shows that from the video repositories we targeted, we were able to obtain a relatively well-balanced distribution of collision types in our data. Here, the distinction between 'Simple Collision' and 'Multi Collision' is that the former involves 2 participants and the latter involves more than 2 participants. Figure \ref{fig:vids-by-camera} shows that the majority of the videos the pipeline scraped were indeed dashcam videos. This suggests that the pipeline is quite effective in identifying suitable candidates for a dashcam collision dataset.
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=0.46\textwidth,trim={0 1cm 0 0},clip]{by-collision.png}
+	\caption{Distribution of videos in database by collision type}
+	\label{fig:vids-by-collision}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=0.46\textwidth,trim={0 1cm 0 1cm},clip]{by-camera.png}
+	\caption{Distribution of videos in database by camera type}
+	\label{fig:vids-by-camera}
+\end{figure}
+
+\subsection{Collision Prediction Model Training and Analysis}
+\label{section-collision-prediction}
+In our first experiment we merge our dataset with the dataset provided by Chan et. al. We augment their training set with 77 positives and 106 negatives, and their testing set with 20 positives and 20 negatives. We use the same training procedure as Chan et. al, namely we train for 40 epochs with a learning rate of $10^{-4}$ and a batch size of 10. Although our data contribution here is relatively small, we observe a mean time-to-collision of \textbf{2.198s} at \textbf{80\%} recall which is very similar to the existing results from Chan et. al. However, we observe an average precision of 66.22\% which is appreciably lower than the 73.53\% average precision reported by Chan et. al. \cite{chan2016anticipating}
+
+In our second experiment we use the provided pre-trained DSARNN model and test the performance on our entire dataset of 223 videos. We see very poor prediction performance at an average precision of 34.29\%, and in Figure \ref{fig:pr_curve} we observe poor precision at all recall values.
+
+\begin{figure}[!htbp]
+		\centering
+		\includegraphics[width=0.5\textwidth]{prcurve.png}
+		\caption{Pre-trained DSARNN Precision-Recall curve on prototype dataset}
+		\label{fig:pr_curve}
+\end{figure}
+
+These experiments support the notion that in order for a collision prediction model to be generally effective in practice, it must be trained on collisions and complex roads scenes from varying regions and road conditions around the world, which is what we hope to achieve with this data collection pipeline.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\section{CONCLUSION}
@@ -421,9 +430,9 @@ We have aggregated some statistics about our dataset to help clients understand 
 
 There are many ways that we could improve our system, such as the following:
 \begin{enumerate}
-\item Labelling precision improvements: The current video-labelling process in the pipeline, manual bounding box drawing with linear interpolation between input frames, is prone to inserting mistaken bounding boxes that don't exactly match to the location of an object on certain frames. Automated labelling and custom interpolation would speed up the process of labelling and minimize the cases of misplaced bounding boxes. Labelling would be much faster if we had a semi-automated process of detecting objects and tracking them over frames. There are models for object detection that behave reasonably well which we could use, but they would still need to be augmented by a review process. For object tracking, there are simple heuristic algorithms that could be used. Being able to modify the method of interpolation between frames beyond the default linear interpolation would allow for more bounding box precision between large input frame windows. Moreover, given a type of interpolation is stored in the metadata, we probably shouldn't store all interpolated frames, rather than just the ones the user has entered. While linear interpolation works great for entering a frame every 10 frames, supporting more interpolations could be great for faster data entry, or even for supporting affine transformations on more complex bounds.
+\item \textbf{Labelling precision improvements:} The current video-labelling process in the pipeline, manual bounding box drawing with linear interpolation between input frames, is prone to inserting mistaken bounding boxes that don't exactly match to the location of an object on certain frames. Automated labelling and custom interpolation would speed up the process of labelling and minimize the cases of misplaced bounding boxes. Labelling would be much faster if we had a semi-automated process of detecting objects and tracking them over frames. There are models for object detection that behave reasonably well which we could use, but they would still need to be augmented by a review process. For object tracking, there are simple heuristic algorithms that could be used. Being able to modify the method of interpolation between frames beyond the default linear interpolation would allow for more bounding box precision between large input frame windows. Moreover, given a type of interpolation is stored in the metadata, we probably shouldn't store all interpolated frames, rather than just the ones the user has entered. While linear interpolation works great for entering a frame every 10 frames, supporting more interpolations could be great for faster data entry, or even for supporting affine transformations on more complex bounds.
 
-\item Complete Location-Varied Dataset: Our next step is to enlarge our existing dataset of car collisions from regions all over the world, which would then use solely to form a training set and testing set for our next experiment. We could then compare the results of this experiment with location-varied data to the results from the dataset collected in Taiwan by Chan et. al.
+\item \textbf{Complete Location-Varied Dataset:} Our next step is to enlarge our existing dataset of car collisions from regions all over the world, which would then use solely to form a training set and testing set for our next experiment. We could then compare the results of this experiment with location-varied data to the results from the dataset collected in Taiwan by Chan et. al.
 
 \end{enumerate}
 
