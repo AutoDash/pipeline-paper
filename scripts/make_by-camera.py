@@ -39,12 +39,28 @@ if __name__ == '__main__':
     data = [ val for val in metadata.get().items() ]
     pie = reduce(pie_by_camera, data, {})
     fig, ax = plt.subplots()
-    plt.rcParams['font.size'] = 12.0
+    plt.rcParams['font.size'] = 16.0
     plt.rcParams['text.usetex'] = True
     values = list(pie.values())
     keys = list(pie.keys())
+    # Format the labels and values with LaTeX typeface
     for i in range(len(keys)):
         keys[i] = r'$\mathrm{{{0}}}$'.format(keys[i])
-    ax.pie(values, labels=keys, autopct=r'$%.1f\%%$')
+    patches, texts, wedgepcts = ax.pie(values, labels=keys, autopct=r'$%.1f\%%$')
+    
+    # Set the radial positions of the wedge pcts
+    for pct, label in zip(wedgepcts, list(pie.keys())):
+        d = 0.8 
+        if label == MANHELD_CAMERA_LABEL:
+            d = 1.44
+        elif label == STATIONARY_CAMERA_LABEL:
+            d = 1.25
+        xi,yi = pct.get_position()
+        ri = np.sqrt(xi**2+yi**2)
+        phi = np.arctan2(yi,xi)
+        x = d*ri*np.cos(phi)
+        y = d*ri*np.sin(phi)
+        pct.set_position((x,y))
+    
     fig.tight_layout()
-    fig.savefig('by-camera.png', bbox_inches='tight', pad_inches=0)
+    fig.savefig('by-camera.png', dpi=300, bbox_inches='tight', pad_inches=0)

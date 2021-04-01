@@ -39,12 +39,13 @@ if __name__ == '__main__':
     data = [ val for val in metadata.get().items() ]
     pie = reduce(pie_by_collision, data, {})
     fig, ax = plt.subplots()
-    plt.rcParams['font.size'] = 12.0
+    plt.rcParams['font.size'] = 14.0
     plt.rcParams['text.usetex'] = True
     values = list(pie.values())
     keys = list(pie.keys())
+    # Format the labels and values with LaTeX typeface
     for i in range(len(keys)):
         keys[i] = r'$\mathrm{{{0}}}$'.format(keys[i])
     ax.pie(values, labels=keys, autopct=r'$%.1f\%%$')
     fig.tight_layout()
-    fig.savefig('by-collision.png', bbox_inches='tight', pad_inches=0)
+    fig.savefig('by-collision.png', dpi=300, bbox_inches='tight', pad_inches=0)

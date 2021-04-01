@@ -274,9 +274,11 @@ We have aggregated some statistics about our dataset to help clients understand 
     \begin{axis}[
       title={Objects by class},
       ylabel={Frequency (\# of objects)},
+      ymin=-50,
+      ymax=1800,
       xtick=data,
       xticklabels from table={\byclass}{X},
-      xticklabel style={rotate=90}
+      xticklabel style={rotate=50,anchor=east,yshift=-2mm}
     ]
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byclass;
     \end{axis}
@@ -292,9 +294,10 @@ We have aggregated some statistics about our dataset to help clients understand 
       title={Videos by participant},
       xlabel={Number of participants},
       ylabel={Frequency (\# of videos)},
+      ymin=-5,
+      ymax=175,
       xtick=data,
-      xticklabels from table={\byactors}{X},
-      xticklabel style={rotate=90}
+      xticklabels from table={\byactors}{X}
     ]
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byactors;
     \end{axis}
@@ -310,6 +313,8 @@ We have aggregated some statistics about our dataset to help clients understand 
       title={Videos by agents},
       xlabel={Number of agents},
       ylabel={Frequency (\# of videos)},
+      ymin=-10,
+      ymax=270,
       xtick=data,
       xticklabels from table={\byagents}{X}
     ]
@@ -328,8 +333,10 @@ We have aggregated some statistics about our dataset to help clients understand 
       xlabel={Duration (in frames)},
       ylabel={Frequency (\# of videos)},
       xtick=data,
+      ymin=-5,
+      ymax=130,
       xticklabels from table={\byduration}{X},
-      xticklabel style={rotate=90}
+      xticklabel style = {rotate=45,anchor=east,yshift=-2mm}
     ]
     \addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byduration;
     \end{axis}
@@ -340,7 +347,7 @@ We have aggregated some statistics about our dataset to help clients understand 
 
 \begin{figure}[htpb]
 		\centering
-    \includegraphics[width=3in,trim={0 1cm 0 1cm},clip]{by-collision.png}
+    \includegraphics[width=3in,trim={0 1cm 0 0.5cm},clip]{by-collision.png}
 		\caption{All videos in database grouped by collision type}
 		\label{fig:vids-by-collision}
 \end{figure}
