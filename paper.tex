@@ -366,7 +366,7 @@ In Figure \ref{fig:vids-by-agents}, we observe that it is most common for sample
 	\label{fig:vids-by-agents}
 \end{figure}
 
-In Figure \ref{fig:vids-by-duration}, we can clearly see that there is a roughly standard normal distribution in the number of videos by duration, with a mean, median and mode at around 352 frames. This suggests that the pipeline favors videos which tend to be shorter on average. At an average video framerate of 30 FPS, this equates to a mean duration of just over 11 seconds. In section \ref{section-prototype-dataset}, it was mentioned that clips were cropped to 5 seconds in the prototype dataset, therefore this is a favorable characteristic as it helps reduce the amount of necessary processing.
+In Figure \ref{fig:vids-by-duration}, we can clearly see that there is a roughly standard normal distribution in the number of videos by duration, with a mean, median and mode at around 352 frames. This suggests that the pipeline favors videos which tend to be shorter on average. At an average video framerate of 30 FPS, this equates to a mean duration of just over 11 seconds. In section \ref{section-prototype-dataset}, it was mentioned that clips were cropped to 5 seconds in the prototype dataset. Therefore, this is a favorable characteristic as it helps reduce the amount of necessary processing.
 
 \begin{figure}[!h]
 	\centering
@@ -406,9 +406,9 @@ Figures \ref{fig:vids-by-collision} and \ref{fig:vids-by-camera} outline key cha
 
 \subsection{Collision Prediction Model Training and Analysis}
 \label{section-collision-prediction}
-In our first experiment we merge our dataset with the dataset provided by Chan et. al. We augment their training set with 77 positives and 106 negatives, and their testing set with 20 positives and 20 negatives. We use the same training procedure as Chan et. al, namely we train for 40 epochs with a learning rate of $10^{-4}$ and a batch size of 10. Although our data contribution here is relatively small, we observe a mean time-to-collision of \textbf{2.198s} at \textbf{80\%} recall which is very similar to the existing results from Chan et. al. However, we observe an average precision of 66.22\% which is appreciably lower than the 73.53\% average precision reported by Chan et. al. \cite{chan2016anticipating}
+In our first experiment, we merge our prototype dataset with the dataset provided by Chan et. al. We augment their training set with 77 positives and 106 negatives, and their testing set with 20 positives and 20 negatives. We use the same training procedure as Chan et. al. Namely, we train for 40 epochs with a learning rate of $10^{-4}$ and a batch size of 10. Although our data contribution here is relatively small, we observe a mean time-to-collision of \textbf{2.198s} at \textbf{80\%} recall which is very similar to the existing results from Chan et. al. However, we observe an average precision of 66.22\% which is appreciably lower than the 73.53\% average precision reported by Chan et. al. \cite{chan2016anticipating}
 
-In our second experiment we use the provided pre-trained DSARNN model and test the performance on our entire dataset of 223 videos. We see very poor prediction performance at an average precision of 34.29\%, and in Figure \ref{fig:pr_curve} we observe poor precision at all recall values.
+In our second experiment, we use the provided pre-trained DSARNN model and test the performance on our entire dataset of 223 videos. We see very poor prediction performance at an average precision of 34.29\%, and in Figure \ref{fig:pr_curve} we observe poor precision at all recall values.
 
 \begin{figure}[!htbp]
 		\centering
@@ -417,7 +417,7 @@ In our second experiment we use the provided pre-trained DSARNN model and test t
 		\label{fig:pr_curve}
 \end{figure}
 
-These experiments support the notion that in order for a collision prediction model to be generally effective in practice, it must be trained on collisions and complex roads scenes from varying regions and road conditions around the world, which is what we hope to achieve with this data collection pipeline.
+These experiments support the notion that in order for a collision prediction model to be generally effective in practice, it must be trained on collisions and complex roads scenes from varying regions and road conditions around the world. This is what we hope to achieve with our data collection pipeline.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\section{CONCLUSION}
@@ -428,11 +428,11 @@ These experiments support the notion that in order for a collision prediction mo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{FUTURE WORK}
 
-There are many ways that we could improve our system, such as the following:
+There are many ways in which we could improve our system, namely the following:
 \begin{enumerate}
-\item \textbf{Labelling precision improvements:} The current video-labelling process in the pipeline, manual bounding box drawing with linear interpolation between input frames, is prone to inserting mistaken bounding boxes that don't exactly match to the location of an object on certain frames. Automated labelling and custom interpolation would speed up the process of labelling and minimize the cases of misplaced bounding boxes. Labelling would be much faster if we had a semi-automated process of detecting objects and tracking them over frames. There are models for object detection that behave reasonably well which we could use, but they would still need to be augmented by a review process. For object tracking, there are simple heuristic algorithms that could be used. Being able to modify the method of interpolation between frames beyond the default linear interpolation would allow for more bounding box precision between large input frame windows. Moreover, given a type of interpolation is stored in the metadata, we probably shouldn't store all interpolated frames, rather than just the ones the user has entered. While linear interpolation works great for entering a frame every 10 frames, supporting more interpolations could be great for faster data entry, or even for supporting affine transformations on more complex bounds.
+\item \textbf{Labelling precision improvements:} The current video-labelling process in the pipeline, manual bounding box drawing with linear interpolation between input frames, is prone to inserting mistaken bounding boxes that do not exactly match up with the location of an object on certain frames. Automated labelling and custom interpolation would speed up the process of labelling and minimize the cases of misplaced bounding boxes. Labelling would be much faster if we had a semi-automated process of detecting objects and tracking them over frames. There are models for object detection that behave reasonably well for our purposes, but they would still need to be augmented by a review process. We could easily solve the problem of object tracking by implementing simple heuristic algorithms. Being able to modify the method of interpolation between frames beyond the default linear interpolation would allow for more bounding box precision between large input frame windows. Moreover, if we store the interpolation type in the metadata, we would likely gain a significant improvement in performance and memory usage by not storing all the interpolated frames rather than just the ones the user has entered. While linear interpolation works well for entering a frame every 10 frames, supporting additional types of interpolation would facilitate quicker data entry and enable the possibility of supporting affine transformations on more complex bounds.
 
-\item \textbf{Complete Location-Varied Dataset:} Our next step is to enlarge our existing dataset of car collisions from regions all over the world, which would then use solely to form a training set and testing set for our next experiment. We could then compare the results of this experiment with location-varied data to the results from the dataset collected in Taiwan by Chan et. al.
+\item \textbf{Complete Location-Varied Dataset:} Our next step is to expand our existing dataset of automobile collisions to include samples from additional regions across the globe. We would then use this to form a training and testing set for our next experiment. Finally, we would compare the results of this experiment with location-varied data to the results from the dataset collected in Taiwan by Chan et. al.
 
 \end{enumerate}
 
