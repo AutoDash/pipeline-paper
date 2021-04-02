@@ -52,7 +52,7 @@
 
 
 \title{\LARGE \bf
-A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
+A Semi-Automated Software Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
 }
 
 \author{
@@ -76,7 +76,7 @@ A Pipeline for Assembling Collision and Near-Collision Dashcam Footage Datasets
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-Over the last decade, emphasis has been made on the need for autonomous vehicles to reduce road collisions and reckless driving. However, research into collision prediction has been slowed by the lack of egocentric collision-oriented datasets. Currently, this type of data is often created through computer generated scenarios \cite{Kim_Lee_Hwang_Suh_2019} due to the dangerous and costly nature of road collisions and data collection equipment. We provide a pipeline to assemble datasets of real vehicle collision events that have been published online to various video repositories. We specifically focus on collecting footage of collisions recorded from front-mounted dashcam video cameras and demonstrate the importance of learning from complex road scenes and conditions globally rather than in one region. Further, we present a small prototype dataset that we have produced using our pipeline which includes egocentric dashcam vehicle footage from all over the world, subject to varying visibilities, varying weather conditions, and varying settings.
+Over the last decade, emphasis has been made on the need for autonomous vehicles to reduce road collisions and reckless driving. However, research into collision prediction has been slowed by the lack of egocentric collision-oriented datasets. Currently, this type of data is often created through computer generated scenarios \cite{Kim_Lee_Hwang_Suh_2019} due to the dangerous and costly nature of road collisions and data collection equipment. We provide a semi-automated software pipeline to assemble datasets of real vehicle collision events that have been published online to various video repositories. We specifically focus on collecting footage of collisions recorded from front-mounted dashcam video cameras and demonstrate the importance of learning from complex road scenes and conditions globally rather than in one region. Further, we present a small prototype dataset that we have produced using our pipeline which includes egocentric dashcam vehicle footage from all over the world, subject to varying visibilities, varying weather conditions, and varying settings.
 
 \end{abstract}
 
@@ -86,34 +86,34 @@ Over the last decade, emphasis has been made on the need for autonomous vehicles
 In the advent of connected vehicles and autonomous transportation, it has become commonplace to equip vehicles with high-end equipment to facilitate automated collision avoidance systems \cite{Perumal2020LidarBI}.
 Using these vehicles to record collision situations has a two-fold cost: both the car and expensive data-gathering equipment are put at risk.
 However, we can collect collision data naturally in real driving scenarios through dashcams -- cheap video cameras that can be mounted to a car's dashboard.
-Typically used for insurance purposes, dashcams have the added benefit of recording a wide variety of real collisions that might not be effectively simulated. 
+Typically used for insurance purposes, dashcams have the added benefit of recording a wide variety of real collisions that are difficult to simulate effectively. 
 This has led to the creation of many online communities to share videos of these rare situations on websites such as Reddit, YouTube, and Imgur.
 We propose that this egocentric dashcam video stream can be leveraged by computer vision systems to act as an affordable and commonplace sensor for automated collision prediction. 
 
 In this paper we present a software pipeline to facilitate the collection, processing and annotation of egocentric dashcam videos from various online video repositories to produce datasets that can be used to train deep dashcam collision prediction models.
 We aim to generate datasets that are not constrained to any regions or countries but rather provide location-agnostic data that is representative of general, global road and vehicle conditions.
 These datasets will also be collision-oriented as the majority of these videos contain collisions for people's viewing.
-Current autonomous vehicle data collection techniques typically require astronomically expensive hardware and equipment and, consequently, are rarely involved in collisions and intentionally not put in high risk environments that may lead to a collision.
+Current autonomous vehicle data collection techniques typically require astronomically expensive hardware and equipment. Consequently, they are rarely involved in collisions and intentionally not put in high risk environments that may lead to a collision.
 Thus, our goal is to capture this data by taking advantage of existing videos of real-world collisions. 
 
 The pipeline uses web-scraping techniques to fetch the video data from these websites, along with a set of video metadata, describing the video's contents.
 We use this data, in combination with the manually annotated data in order to create a prototype collision dataset of dashcam video samples.
-This combination allows us to take advantage of the wide variety of videos available on the internet, while still having reliable data that has been curated manually.
-As part of this data, we identify participants and bystanders, both known as agents. Participants are objects that are involved in a collision identified in the metadata, while bystanders are uninvolved objects. 
+This combination allows us to take advantage of the wide variety of videos available on the Internet while still having reliable data that has been curated manually.
+As part of this data, we identify \textit{participants} and \textit{bystanders}, both known as \textit{agents}. Participants are objects that are involved in a collision identified in the metadata, while bystanders are uninvolved objects. 
 
 It is worthwhile to note that in collecting samples for our prototype dataset, we do not impose a minimum video resolution threshold. We mitigate this by only collecting samples which contain clearly identifiable agents. This allows us to maximize the amount of data that we can feasibly include in our dataset. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{RELATED WORK}
 
-Chan et al. \cite{chan2016anticipating} approach the same problem of collision prediction via egocentric dashcam videos. They propose a novel Dynamic-Spatial-Attention Recurrent Neural Network (DSARNN) that distributes attention to localized and detected vehicles within the video and models temporal dependencies to predict the earliest frame of a potential impending collision. Released with their paper is a dataset of 678 dashcam videos capturing areas in Taiwan. Each video is annotated with vehicle tracking bounding boxes, the vehicles that were involved in the collision and the frame of the collision. We hope to allow researchers to expand on this dataset with location-agnostic data and similar annotations.
+Chan et al. \cite{chan2016anticipating} approach the same problem of collision prediction via egocentric dashcam videos. They propose a novel Dynamic-Spatial-Attention Recurrent Neural Network (DSARNN) that distributes attention to localized and detected vehicles within the video and models temporal dependencies to predict the earliest frame of a potential impending collision. Along with their paper, they have released a dataset of 678 dashcam videos capturing areas in Taiwan. Each video is annotated with vehicle tracking bounding boxes, the vehicles that were involved in the collision and the frame of the collision. We hope to allow researchers to expand on this dataset with location-agnostic data and similar annotations.
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{METHODOLOGY}
 
-The software pipeline is built from several modular components called executors that each process or handle the data corresponding to a single video before piping the resulting data to the next executor. Figure \ref{fig:pr_curve} illustrates the organization of the pipeline in its default configuration.
+Our pipeline is built from several modular components called executors that each process or handle the data corresponding to a single video before piping the resulting data to the next executor. Figure \ref{fig:pr_curve} illustrates the organization of the pipeline in its default configuration.
 
 \begin{figure}[htbp]
 	\centering
@@ -152,7 +152,7 @@ The software pipeline is built from several modular components called executors 
 
 The entry into our pipeline is a set of web scraper executors that each target and scrape a specific website or video repository based on a user-defined set of key-terms, and a \textit{database source executor} that pulls unlabelled videos from the user's database. Videos that are pulled by the scrapers are immediately added to the database with relevant metadata and marked as unlabelled. Subsequently, they are loaded into memory and sequentially fed into the pipeline. If the pipeline terminates before labelling a video, it remains flagged as unlabelled in the database and the video will be pulled in a subsequent run by the \textit{database source executor}. Crawler state is maintained via database lookup of specified key-value pairs to ensure duplicate data is not pulled. No video preprocessing such as resizing, trimming or cropping is automatically performed.
 
-Users may define their own search terms to be used when querying the video repository. This value can be set in a YAML pipeline configuration file. By default, our scrapers query using the keywords: \texttt{Car crash dashcam}. Currently we support crawling Reddit and YouTube to locate videos that are of interest, and downloading videos hosted on YouTube and Imgur. Users that want to pull from a video repository that is not currently implemented should create a custom executor and implement the \texttt{iCrawler} interface. This new executor should be added as an entry point in a new YAML configuration and should generate and return a \texttt{MetaDataItem} with video source information to be used by a subsequent and corresponding downloader. \texttt{MetaDataItem} objects are fed into the \texttt{UniversalDownloader} which aggregates \texttt{iDownloader} implementations and distributes \texttt{MetaDataItem} objects to their corresponding downloader via regular expressions matching of source URL's. New downloaders should be registered with the \texttt{UniversalDownloader} via a YAML pipeline configuration along with a regular expression string for URL matching.
+Users may define their own search terms to be used when querying the video repository. This value can be set in a YAML pipeline configuration file. By default, our scrapers query using the keywords: \texttt{Car crash dashcam}. Currently we support crawling Reddit and YouTube to locate videos that are of interest, and downloading videos hosted on YouTube and Imgur. Users that want to pull from a video repository that is not currently implemented should create a custom executor and implement the \texttt{iCrawler} interface. This new executor should be added as an entry point in a new YAML configuration and should generate and return a \texttt{MetaDataItem} with video source information to be used by a subsequent and corresponding downloader. \texttt{MetaDataItem} objects are fed into the \texttt{UniversalDownloader} which aggregates \texttt{iDownloader} implementations. The \texttt{UniversalDownloader} then distributes \texttt{MetaDataItem} objects to their corresponding downloader by matching source URLs through regular expressions. New downloaders should be registered with the \texttt{UniversalDownloader} via a YAML pipeline configuration along with a regular expression string for URL matching.
 
 %HAS BEEN REMOVED BECAUSE NOT FUNCTIONAL
 %\subsection{Video Preprocessing}
@@ -160,9 +160,9 @@ Users may define their own search terms to be used when querying the video repos
 %\subsection{Object Detection \& Tracking}
 %\todo{Automated object detection not used right now?}
 \subsection{Anonymization}
-An important facet of automobile data aggregation is in eliminating biases and protecting the identities of depicted individuals. Consequently, our pipeline contains a post-processing stage in which we anonymize personally identifiable information. Specifically, we provide the executor \texttt{FaceBlurrer}, which blurs faces. This executor first uses a MobileNet Single Shot MultiBox Detector \cite{yixuan_h_y_hu_2021_4642275} trained on the WIDERFACE dataset \cite{yang2016wider} to obtain the bounding boxes of all visibly identifiable individuals' faces at each frame of a given video, and then applies a blurring mask over each bounding box. We have chosen to use a MobileNet SSD for this task because it achieves a good balance between accuracy and performance, while requiring relatively little memory \cite{yixuan_h_y_hu_2021_4642275}.
+An important facet of automobile data aggregation is in eliminating biases and protecting the identities of depicted individuals. Consequently, our pipeline contains a post-processing stage in which we anonymize personally identifiable information. Specifically, we provide the executor \texttt{FaceBlurrer}, which blurs faces. This executor first uses a MobileNet Single Shot MultiBox Detector \cite{yixuan_h_y_hu_2021_4642275} trained on the WIDERFACE dataset \cite{yang2016wider} to obtain the bounding boxes of all visibly identifiable individuals' faces at each frame of a given video. The executor then applies a blurring mask over each bounding box and writes the modified frame back to the video stream. We have chosen to use a MobileNet SSD for this task because it achieves a good balance between accuracy and performance, while requiring relatively little memory \cite{yixuan_h_y_hu_2021_4642275}.
 
-This software module is encapsulated as a library and can be reused by importing our \texttt{anonymization} package. The accuracy, amount and type of blurring applied can be tweaked using the API exposed by the \texttt{anonymization} package.
+This software module is encapsulated as a library and can be reused in other projects by importing our \texttt{anonymization} package. The accuracy, amount and type of blurring applied can be tweaked using the exposed API.
 
 \subsection{Annotation}
 
@@ -178,22 +178,22 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
   \item "\texttt{description}": Description of the video as scraped from the video hosting website
   \item "\texttt{state}": String that describes the current labelling state of the video. One of \textit{processed}, \textit{in-progress}, \textit{NULL}
   \item "\texttt{download\_src}": The site that the video was sourced from (e.g. YouTube)
-  \item "\texttt{tags}": Object that contains custom user-defined tags on videos and additional data that is site specific
+  \item "\texttt{tags}": Object that contains custom user-defined tags on videos and additional data that is site- specific
   \item "\texttt{title}": The title of the video from the video hosting website
-  \item "\texttt{url}": Url that the video was fetched from
-  \item "\texttt{is\_split\_url}": Boolean that is true if the video has been segmented into multiple \texttt{MetaDataItem} objects during labelling
+  \item "\texttt{url}": URL that the video was fetched from
+  \item "\texttt{is\_split\_url}": Boolean that is true if the video has been segmented into multiple \texttt{MetaDataItem} objects during labelling, false otherwise
   \item "\texttt{enum\_tags}": List of tags identifying the content of the video. New tags can be added while labelling and can identify anything important in the video.
-  \item "\texttt{start\_i}": The start frame of the video segment that the bounding boxes are created for (if is\_split\_url is true)
-  \item "\texttt{end\_i}": The end frame of the video segment that the bounding boxes are created for (if is\_split\_url is true)
+  \item "\texttt{start\_i}": The start frame of the video segment that the bounding boxes are created for (if \texttt{is\_split\_url} is true)
+  \item "\texttt{end\_i}": The end frame of the video segment that the bounding boxes are created for (if \texttt{is\_split\_url} is true)
   \item "\texttt{bb\_fields}": All bounding-box specific data
   \begin{itemize}
     \item "\texttt{collision\_locations}": List of frame numbers indicating the collision start frames
-    \item "\texttt{resolution}": List with 2 elements (Width,Height) representing the resolution of the video the bounding boxes were created for in number of pixels 
-    \item "\texttt{objects}": List of all of the bounding boxes for each object in the video. An object being either a vehicle or pedestrian. Within each object, there is metadata specific to that object.
+    \item "\texttt{resolution}": List with 2 elements (width, height) representing the resolution in pixels of the video the bounding boxes were created for
+    \item "\texttt{objects}": List of all of the relevant metadata pertaining to each agent in the video (either participant or bystander). Each item in this list includes the following:
     \begin{itemize}
       \item "\texttt{id}": Unique numerical identifier that represents this object
-      \item "\texttt{bboxes}": List of bounding boxes for this specific object. Each bounding box is represented as a 1x5 array with elements (frame number, x1, y1, x2, y2)
-      \item "\texttt{class}": The class of the object, such as "car", "pedestrian"
+      \item "\texttt{bboxes}": List of bounding boxes for this specific object. Each bounding box is represented as a $1\times5$ array with elements in the following order: frame number, x1, y1, x2, y2
+      \item "\texttt{class}": The class of the object (eg. "car", "pedestrian")
       \item "\texttt{has\_collision}": Boolean that is true if the object is in a collision, false otherwise
     \end{itemize}
   \end{itemize}
@@ -244,18 +244,18 @@ There are many fields in the metadata object (as can be seen in Figure \ref{meta
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{EXPERIMENT}
+\section{EXPERIMENTS}
 
 \subsection{Prototype Dataset}
 \label{section-prototype-dataset}
-In order to evaluate the importance of acquiring data from multiple geographical locations and under varying driving conditions around the world, we have built a prototype dataset of 223 video clips using our pipeline on which we will test the existing collision anticipation model, DSARNN. This dataset is comprised of 97 positive and 126 negative videos. Most of these videos represent road scenes from North America, Europe and Russia which have noticeably different characteristics than those in Taiwan. To prepare our data we follow the steps outlined by Chan et. al \cite{chan2016anticipating}. Namely, we trim videos such that they are 5 seconds long, sampled at 20 FPS, and the collision occurs at frame 90. This trimming and sampling functionality is provided within the pipeline configuration \texttt{smallcorgi\_exporter.yml}. In our experiments we train the DSARNN model on features produced by running a pre-trained VGG on each full frame and the cropped objects within the frame \cite{DBLP:journals/corr/SimonyanZ14a}. This is denoted VGG+RNN+F+D-con. in the original publication. We note that this data includes manually annotated bounding boxes, so there will be no error imposed by using automated vehicle detection and localization models.
+In order to evaluate the importance of acquiring data from multiple geographical locations and under varying driving conditions around the world, we have built a prototype dataset of 223 video clips using our pipeline on which we will test the existing collision anticipation model, DSARNN. This dataset is comprised of 97 positive and 126 negative videos. Most of these videos represent road scenes from North America, Europe and Russia which have noticeably different characteristics than those in Taiwan. To prepare our data we follow the steps outlined by Chan et. al \cite{chan2016anticipating}. Namely, we trim videos such that they are 5 seconds long, sampled at 20 FPS, and the collision occurs at frame 90. This trimming and sampling functionality is provided within the pipeline configuration \texttt{smallcorgi\_exporter.yml}. In our experiments, we train the DSARNN model on features produced by running a pre-trained VGG on each full frame and the cropped objects within the frame \cite{DBLP:journals/corr/SimonyanZ14a}. This is denoted VGG+RNN+F+D-con. in the original publication. We note that this data includes manually annotated bounding boxes, so there will be no error imposed by using automated vehicle detection and localization models.
 
 \pgfplotstableread[col sep=comma]{by-classes.csv}\byclass
 \pgfplotstableread[col sep=comma]{by-actors.csv}\byactors
 \pgfplotstableread[col sep=comma]{by-agents.csv}\byagents
 \pgfplotstableread[col sep=comma]{by-duration.csv}\byduration
 
-We have aggregated some statistics about our database and dataset to help clients understand the pertinent distributions in the data. While these distributions may be representative of online collision footage, they are not necessarily representative of real world collisions. Note that the total number of videos represented by the histograms is a superset of the number of videos in the final prototype dataset as it includes videos that were ultimately unsuitable for our collision prediction experiments. Thus we denote this superset as the \textit{pre-processed prototype dataset}.
+We have aggregated some statistics about our database and dataset to help clients understand the pertinent distributions in the data. While these distributions may be representative of online collision footage, they are not necessarily representative of real world collisions. The total number of videos represented by the following tables and histograms is a superset of the number of videos in the final prototype dataset as it includes videos that were ultimately unsuitable for our collision prediction experiments. Thus, we denote this superset as the \textit{pre-processed prototype dataset}.
 
 \begin{table}[!h]
 	\caption{Distribution of videos in database by download source}
@@ -264,13 +264,9 @@ We have aggregated some statistics about our database and dataset to help client
 		\begin{tabular}{|c|c|}
 			\hline
 			Download source & Percentage of videos \\
-			\hline
 			youtube.com & \textbf{98.40\%} \\
-			\hline
 			imgur.com & 0.85\% \\
-			\hline
 			gfycat.com & 0.47\% \\
-			\hline
 			streamable.com & 0.28\% \\
 			\hline
 		\end{tabular}
@@ -284,15 +280,10 @@ We have aggregated some statistics about our database and dataset to help client
 		\begin{tabular}{|c|c|}
 			\hline
 			Region & Percentage of videos \\
-			\hline
 			North America & 48.13\% \\
-			\hline
 			Europe & 24.30\% \\
-			\hline
 			Russia & 19.16\% \\
-			\hline
 			Asia & 4.67\% \\
-			\hline
 			Australia & 3.74\% \\
 			\hline
 		\end{tabular}
@@ -301,7 +292,7 @@ We have aggregated some statistics about our database and dataset to help client
 
 From Table \ref{vids-by-source}, it is clear that the vast majority of videos that have been processed through our pipeline and cataloged in our database were obtained from YouTube. It can also be seen that the YouTube and Reddit downloaders are capable of scraping various other online repositories such as Imgur, Gfycat and Streamable. 
 
-From Table \ref{vids-by-region}, we can see that our prototype dataset consists of dashcam footage from a reasonably well-balanced distribution of geographical regions. This also implies a diverse representation in driving conditions due to the various differences in climate and infrastructure amongst these regions.
+From Table \ref{vids-by-region}, we can see that our pre-processed prototype dataset consists of dashcam footage from a reasonably well-balanced distribution of geographical regions. The dataset mostly consists of samples from North America, Europe and Russia, which complements the dataset presented by Chan. et. al. \cite{chan2016anticipating} well. This also implies a diverse representation in driving conditions due to the various differences in climate and infrastructure amongst these regions.
 
 \begin{figure}[!h]
 	\centering
@@ -341,11 +332,11 @@ From Table \ref{vids-by-region}, we can see that our prototype dataset consists 
 	\label{fig:vids-by-participant}
 \end{figure}
 
-In Figure \ref{fig:obj-by-class}, we see that there are several types of objects which have been identified as agents in our prototype dataset. Among these, the most common are motorized vehicles and pedestrians as one would intuitively expect. A number of stationary, inanimate objects such as industrial machinery and poles were noteworthy as they were involved in collisions. These have been aggregated into the "other" category.
+From Figure \ref{fig:obj-by-class}, we see that there are several types of objects which have been identified as agents in our pre-processed prototype dataset. Among these, the most common are motorized vehicles and pedestrians as one would intuitively expect. A number of stationary, inanimate objects such as industrial machinery were worth noting as they were involved in collisions. These have been aggregated into the "other" category.
 
-In Figure \ref{fig:vids-by-participant}, it can be seen that there is a wide range in the distribution of the number of participants in each sample of our dataset. We also observe that it is more common for no collisions to occur than any particular non-zero number of participants to be present in a sample.
+From Figure \ref{fig:vids-by-participant}, it can be seen that there is a wide range in the distribution of the number of participants in each sample of our dataset. We also observe that it is more common for no collisions to occur than any particular non-zero number of participants to be present in a sample.
 
-In Figure \ref{fig:vids-by-agents}, we observe that it is most common for samples to contain either 2 agents or no agents at all. This is implied by the fact that videos with only 1 agent cannot contain a collision. These are less likely to be interesting and in turn, scraped by our pipeline.
+From Figure \ref{fig:vids-by-agents}, we observe that it is most common for samples to contain either exactly 2 agents or no agents at all. This is implied by the fact that videos with only 1 agent cannot contain a collision. These are less likely to be interesting and in turn, scraped by our pipeline.
 
 \begin{figure}[!h]
 	\centering
@@ -362,11 +353,11 @@ In Figure \ref{fig:vids-by-agents}, we observe that it is most common for sample
 	\addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byagents;
 	\end{axis}
 	\end{tikzpicture}
-	\caption{Distribution of videos in prototype dataset by number of agents}
+	\caption{Distribution of videos in pre-processed prototype dataset by number of agents}
 	\label{fig:vids-by-agents}
 \end{figure}
 
-In Figure \ref{fig:vids-by-duration}, we can clearly see that there is a roughly standard normal distribution in the number of videos by duration, with a mean, median and mode at around 352 frames. This suggests that the pipeline favors videos which tend to be shorter on average. At an average video framerate of 30 FPS, this equates to a mean duration of just over 11 seconds. In section \ref{section-prototype-dataset}, it was mentioned that clips were cropped to 5 seconds in the prototype dataset. Therefore, this is a favorable characteristic as it helps reduce the amount of necessary processing.
+From Figure \ref{fig:vids-by-duration}, we can clearly see that there is a roughly standard normal distribution in the number of videos by duration, with a mean, median and mode at around 352 frames. This suggests that the pipeline favors videos which tend to be shorter on average. At an average video framerate of 30 FPS, this equates to a mean sample duration of just over 11 seconds. In section \ref{section-prototype-dataset}, it was mentioned that the samples were cropped to 5 seconds in the final prototype dataset. Therefore, this is a favorable characteristic as it helps reduce the amount of necessary processing.
 
 \begin{figure}[!h]
 	\centering
@@ -384,11 +375,11 @@ In Figure \ref{fig:vids-by-duration}, we can clearly see that there is a roughly
 	\addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byduration;
 	\end{axis}
 	\end{tikzpicture}
-	\caption{Distribution of videos in prototype dataset by duration}
+	\caption{Distribution of videos in pre-processed prototype dataset by duration}
 	\label{fig:vids-by-duration}
 \end{figure}
 
-Figures \ref{fig:vids-by-collision} and \ref{fig:vids-by-camera} outline key characteristics about our database at large. Figure \ref{fig:vids-by-collision} shows that from the video repositories we targeted, we were able to obtain a relatively well-balanced distribution of collision types in our data. Here, the distinction between 'Simple Collision' and 'Multi Collision' is that the former involves 2 participants and the latter involves more than 2 participants. Figure \ref{fig:vids-by-camera} shows that the majority of the videos the pipeline scraped were indeed dashcam videos. This suggests that the pipeline is quite effective in identifying suitable candidates for a dashcam collision dataset.
+Figures \ref{fig:vids-by-collision} and \ref{fig:vids-by-camera} outline key characteristics about our database at large. Figure \ref{fig:vids-by-collision} shows that from the video repositories we targeted, we were able to obtain a relatively well-balanced distribution of collision types in our data. Here, the distinction between \textit{Simple Collision} and \textit{Multi Collision} is that the former involves exactly 2 participants and the latter involves more than 2 participants. Figure \ref{fig:vids-by-camera} shows that the majority of the videos the pipeline scraped were indeed dashcam videos. This suggests that the pipeline is quite effective in identifying suitable candidates for a  dataset consisting solely of dashcam collision footage.
 
 \begin{figure}[!h]
 	\centering
@@ -417,7 +408,7 @@ In our second experiment, we use the provided pre-trained DSARNN model and test 
 		\label{fig:pr_curve}
 \end{figure}
 
-These experiments support the notion that in order for a collision prediction model to be generally effective in practice, it must be trained on collisions and complex roads scenes from varying regions and road conditions around the world. This is what we hope to achieve with our data collection pipeline.
+These experiments support the notion that in order for a collision prediction model to be generally effective in practice, it must be trained on collisions and complex roads scenes from varying regions and road conditions around the world.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\section{CONCLUSION}
@@ -430,7 +421,7 @@ These experiments support the notion that in order for a collision prediction mo
 
 There are many ways in which we could improve our system, namely the following:
 \begin{enumerate}
-\item \textbf{Labelling precision improvements:} The current video-labelling process in the pipeline, manual bounding box drawing with linear interpolation between input frames, is prone to inserting mistaken bounding boxes that do not exactly match up with the location of an object on certain frames. Automated labelling and custom interpolation would speed up the process of labelling and minimize the cases of misplaced bounding boxes. Labelling would be much faster if we had a semi-automated process of detecting objects and tracking them over frames. There are models for object detection that behave reasonably well for our purposes, but they would still need to be augmented by a review process. We could easily solve the problem of object tracking by implementing simple heuristic algorithms. Being able to modify the method of interpolation between frames beyond the default linear interpolation would allow for more bounding box precision between large input frame windows. Moreover, if we store the interpolation type in the metadata, we would likely gain a significant improvement in performance and memory usage by not storing all the interpolated frames rather than just the ones the user has entered. While linear interpolation works well for entering a frame every 10 frames, supporting additional types of interpolation would facilitate quicker data entry and enable the possibility of supporting affine transformations on more complex bounds.
+\item \textbf{Labelling precision improvements:} The current video labelling process in the pipeline involves manual bounding box drawing with linear interpolation between input frames. This is prone to inserting mistaken bounding boxes that do not exactly match up with the location of an object on certain frames. Automated labelling and custom interpolation would speed up the process of labelling and minimize the cases of misplaced bounding boxes. Labelling would be much faster if we had a semi-automated process of detecting objects and tracking them over frames. There are models for object detection that behave reasonably well for our purposes, but they would still need to be augmented by a review process. We could easily solve the problem of object tracking by implementing simple heuristic algorithms. Being able to modify the method of interpolation between frames beyond the default linear interpolation would allow for more bounding box precision between large input frame windows. Moreover, if we store the interpolation type in the metadata, we would likely gain a significant improvement in performance and memory usage by not storing all the interpolated frames rather than just the ones the user has entered. While linear interpolation works well for entering one frame for every 10 frames in a video clip, supporting additional types of interpolation would facilitate quicker data entry and enable the possibility of supporting affine transformations on more complex bounds.
 
 \item \textbf{Complete Location-Varied Dataset:} Our next step is to expand our existing dataset of automobile collisions to include samples from additional regions across the globe. We would then use this to form a training and testing set for our next experiment. Finally, we would compare the results of this experiment with location-varied data to the results from the dataset collected in Taiwan by Chan et. al.
 
