@@ -323,7 +323,8 @@ From Table \ref{vids-by-region}, we can see that our pre-processed prototype dat
     ymin=-5,
 	ymax=175,
 	xtick=data,
-	xticklabels from table={\byactors}{X}
+	xticklabels from table={\byactors}{X},
+	xticklabel style = {rotate=45,anchor=east,yshift=-2mm}
 	]
 	\addplot[fill, ybar] table [x expr=\coordindex, y={Y}] \byactors;
 	\end{axis}

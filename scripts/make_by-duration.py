@@ -38,7 +38,9 @@ if __name__ == '__main__':
         hist['Unknown'] = hist[float('inf')]
         del hist[float('inf')]
     """
-    dtype = [ ('X', np.uint32), ('Y', np.uint32) ]
-    Z = np.array([ *zip(bins, hist) ], dtype=dtype)
+    bins = np.insert(bins, 0, 0, axis=0)
+    bin_intervals = [str(int(x))+ "-" + str(int(y)) for x,y in zip(bins[:-1], bins[1:])]
+    dtype = [ ('X', object), ('Y', np.uint32) ]
+    Z = np.array([ *zip(bin_intervals, hist) ], dtype=dtype)
     np.savetxt('by-duration.csv', Z, delimiter=',', fmt=['%s', '%d'], header='X,Y', comments='')
 

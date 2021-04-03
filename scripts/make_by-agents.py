@@ -6,7 +6,7 @@ from functools import reduce
 
 FIREBASE_CRED_FILENAME = "autodash-9dccb-add3cdae62ea.json"
 
-def histogram_by_duration(hist, data):
+def histogram_by_agents(hist, data):
     (key, data) = data
     if data.get('is_cancelled', True):
         return hist
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     metadata = db.reference('metadata')
     print('Retrieved data')
     data = [ val for val in metadata.get().items() ]
-    hist = reduce(histogram_by_duration, data, {})
+    hist = reduce(histogram_by_agents, data, {})
     print(hist)
     dtype = [ ('X', object), ('Y', np.uint32) ]
     Z = np.array([ *hist.items() ], dtype=dtype)
