@@ -31,15 +31,17 @@ if __name__ == '__main__':
     print('Retrieved data')
     data = [ val for val in metadata.get().items() ]
     hist = reduce(histogram_by_duration, data, [])
-    print(hist)
     hist, bins = np.histogram(hist, bins=10, range=(65, 1500))
     """
     if float('inf') in hist:
         hist['Unknown'] = hist[float('inf')]
         del hist[float('inf')]
     """
-    bins = np.insert(bins, 0, 0, axis=0)
-    bin_intervals = [str(int(x))+ "-" + str(int(y)) for x,y in zip(bins[:-1], bins[1:])]
+    print(bins)
+    print(hist)
+    bin_intervals = [str(int(x))+ "-" + str(int(y) - 1) for x,y in zip(bins[:-2], bins[1:-1])]
+    bin_intervals.append(str(int(bins[-2]))+ "-" + str(int(bins[-1])))
+    print(bin_intervals)
     dtype = [ ('X', object), ('Y', np.uint32) ]
     Z = np.array([ *zip(bin_intervals, hist) ], dtype=dtype)
     np.savetxt('by-duration.csv', Z, delimiter=',', fmt=['%s', '%d'], header='X,Y', comments='')
