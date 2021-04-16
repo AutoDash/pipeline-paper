@@ -2,19 +2,18 @@ import numpy as np
 import firebase_admin as fb
 from firebase_admin import credentials, db
 from firebase_admin.db import Reference
-from functools import reduce
+from functools import reduce, partial
 
 FIREBASE_CRED_FILENAME = "autodash-9dccb-add3cdae62ea.json"
 RELEVANT_CLASSES = ['car', 'bus', 'truck', 'van', 'motorcycle', 'train', 'streetcar', 'pedestrian', 'bicycle', 'animal']
 NOOP_CLASSES = ['NONE', 'test']
 OTHER_CLASS = 'other'
 
-def histogram_by_class(hist, data):
+def histogram_by_class(hist, data, seen):
     (key, data) = data
-    if data.get('is_cancelled', True):
+    if data.get('is_cancelled', True) or 'bb_fields' not in data or (data.get('url'), data.get('start_i')) in seen:
         return hist
-    if 'bb_fields' not in data:
-        return hist
+    seen.add((data.get('url'), data.get('start_i')))
     viewed_ids = set()
     for obj in data['bb_fields'].get('objects', []):
         if obj['id'] not in viewed_ids:
@@ -39,7 +38,7 @@ if __name__ == '__main__':
     metadata = db.reference('metadata')
     print('Retrieved data')
     data = [ val for val in metadata.get().items() ]
-    hist = reduce(histogram_by_class, data, {})
+    hist = reduce(partial(histogram_by_class, seen = set()), data, {})
     del hist['NONE']
     del hist['test']
     other = hist[OTHER_CLASS]

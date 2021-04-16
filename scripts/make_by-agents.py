@@ -2,16 +2,15 @@ import numpy as np
 import firebase_admin as fb
 from firebase_admin import credentials, db
 from firebase_admin.db import Reference
-from functools import reduce
+from functools import reduce, partial
 
 FIREBASE_CRED_FILENAME = "autodash-9dccb-add3cdae62ea.json"
 
-def histogram_by_agents(hist, data):
+def histogram_by_agents(hist, data, seen):
     (key, data) = data
-    if data.get('is_cancelled', True):
+    if data.get('is_cancelled', True) or 'bb_fields' not in data or (data.get('url'), data.get('start_i')) in seen:
         return hist
-    if 'bb_fields' not in data:
-       return hist
+    seen.add((data.get('url'), data.get('start_i')))
     num_agents = 0
     viewed_ids = set()
     for obj in data['bb_fields'].get('objects', []):
@@ -36,7 +35,7 @@ if __name__ == '__main__':
     metadata = db.reference('metadata')
     print('Retrieved data')
     data = [ val for val in metadata.get().items() ]
-    hist = reduce(histogram_by_agents, data, {})
+    hist = reduce(partial(histogram_by_agents, seen = set()), data, {})
     print(hist)
     dtype = [ ('X', object), ('Y', np.uint32) ]
     Z = np.array([ *hist.items() ], dtype=dtype)
